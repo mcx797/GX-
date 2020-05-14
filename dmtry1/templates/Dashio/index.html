@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="Dashboard">
+  <meta name="keyword" content="Dashboard, Bootstrap, Admin, Template, Theme, Responsive, Fluid, Retina">
+  <title>管理员页面</title>
+
+  <!-- Favicons -->
+  <link href="/templates/Dashio/img/favicon.png" rel="icon">
+  <link href="/templates/Dashio/img/apple-touch-icon.png" rel="apple-touch-icon">
+
+  <!-- Bootstrap core CSS -->
+  <link href="/templates/Dashio/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <!--external css-->
+  <link href="/templates/Dashio/lib/font-awesome/css/font-awesome.css" rel="stylesheet" />
+  <link rel="stylesheet" type="text/css" href="/templates/Dashio/css/zabuto_calendar.css">
+  <link rel="stylesheet" type="text/css" href="/templates/Dashio/lib/gritter/css/jquery.gritter.css" />
+
+  <link rel="stylesheet" href="http://cdn.oesmith.co.uk/morris-0.4.3.min.css">
+
+  <!-- Custom styles for this template -->
+  <link href="/templates/Dashio/css/style.css" rel="stylesheet">
+  <link href="/templates/Dashio/css/style-responsive.css" rel="stylesheet">
+  <script src="/templates/Dashio/lib/chart-master/Chart.js"></script>
+
+  <!-- =======================================================
+    Template Name: Dashio
+    Template URL: https://templatemag.com/dashio-bootstrap-admin-template/
+    Author: TemplateMag.com
+    License: https://templatemag.com/license/
+  ======================================================= -->
+</head>
+
+<body>
+  <section id="container">
+    <!-- **********************************************************************************************************************************************************
+        TOP BAR CONTENT & NOTIFICATIONS
+        *********************************************************************************************************************************************************** -->
+    <!--header start-->
+    <header class="header black-bg">
+      <div class="sidebar-toggle-box">
+        <div class="fa fa-bars tooltips" data-placement="right" data-original-title="Toggle Navigation"></div>
+      </div>
+      <!--logo start-->
+      <a href="index.html" class="logo"><b>高校教师成果<span>管理系统</span></b></a>
+      <!--logo end-->
+      <div class="nav notify-row" id="top_menu">
+<!--
+
+
+这里是网页头部emmmm目前先不管了吧
+
+-->
+        <!--  notification start -->
+        <ul class="nav top-menu">
+          <!-- settings start -->
+          <li class="dropdown">
+            <a data-toggle="dropdown" class="dropdown-toggle" href="index.html#">
+              <i class="fa fa-tasks"></i>
+              <span class="badge bg-theme">4</span>
+              </a>
+            <ul class="dropdown-menu extended tasks-bar">
+              <div class="notify-arrow notify-arrow-green"></div>
+              <li>
+                <p class="green">You have 4 pending tasks</p>
+              </li>
+              <li>
+                <a href="index.html#">
+                  <div class="task-info">
+                    <div class="desc">Dashio Admin Panel</div>
+                    <div class="percent">40%</div>
+                  </div>
+                  <div class="progress progress-striped">
+                    <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: 40%">
+                      <span class="sr-only">40% Complete (success)</span>
+                    </div>
+                  </div>
+                </a>
+              </li>
+              <li>
+                <a href="index.html#">
+                  <div class="task-info">
+                    <div class="desc">Database Update</div>
+                    <div class="percent">60%</div>
+                  </div>
+                  <div class="progress progress-striped">
+                    <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%">
+                      <span class="sr-only">60% Complete (warning)</span>
+                    </div>
+                  </div>
+                </a>
+              </li>
+              <li>
+                <a href="index.html#">
+                  <div class="task-info">
+                    <div class="desc">Product Development</div>
+                    <div class="percent">80%</div>
+                  </div>
+                  <div class="progress progress-striped">
+                    <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100" style="width: 80%">
+                      <span class="sr-only">80% Complete</span>
+                    </div>
+                  </div>
+                </a>
+              </li>
+              <li>
+                <a href="index.html#">
+                  <div class="task-info">
+                    <div class="desc">Payments Sent</div>
+                    <div class="percent">70%</div>
+                  </div>
+                  <div class="progress progress-striped">
+                    <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" style="width: 70%">
+                      <span class="sr-only">70% Complete (Important)</span>
+                    </div>
+                  </div>
+                </a>
+              </li>
+              <li class="external">
+                <a href="#">See All Tasks</a>
+              </li>
+            </ul>
+          </li>
+          <!-- settings end -->
+          <!-- inbox dropdown start-->
+          <li id="header_inbox_bar" class="dropdown">
+            <a data-toggle="dropdown" class="dropdown-toggle" href="index.html#">
+              <i class="fa fa-envelope-o"></i>
+              <span class="badge bg-theme">5</span>
+              </a>
+            <ul class="dropdown-menu extended inbox">
+              <div class="notify-arrow notify-arrow-green"></div>
+              <li>
+                <p class="green">You have 5 new messages</p>
+              </li>
+              <li>
+                <a href="index.html#">
+                  <span class="photo"><img alt="avatar" src="img/ui-zac.jpg"></span>
+                  <span class="subject">
+                  <span class="from">Zac Snider</span>
+                  <span class="time">Just now</span>
+                  </span>
+                  <span class="message">
+                  Hi mate, how is everything?
+                  </span>
+                  </a>
+              </li>
+              <li>
+                <a href="index.html#">
+                  <span class="photo"><img alt="avatar" src="img/ui-divya.jpg"></span>
+                  <span class="subject">
+                  <span class="from">Divya Manian</span>
+                  <span class="time">40 mins.</span>
+                  </span>
+                  <span class="message">
+                  Hi, I need your help with this.
+                  </span>
+                  </a>
+              </li>
+              <li>
+                <a href="index.html#">
+                  <span class="photo"><img alt="avatar" src="img/ui-danro.jpg"></span>
+                  <span class="subject">
+                  <span class="from">Dan Rogers</span>
+                  <span class="time">2 hrs.</span>
+                  </span>
+                  <span class="message">
+                  Love your new Dashboard.
+                  </span>
+                  </a>
+              </li>
+              <li>
+                <a href="index.html#">
+                  <span class="photo"><img alt="avatar" src="img/ui-sherman.jpg"></span>
+                  <span class="subject">
+                  <span class="from">Dj Sherman</span>
+                  <span class="time">4 hrs.</span>
+                  </span>
+                  <span class="message">
+                  Please, answer asap.
+                  </span>
+                  </a>
+              </li>
+              <li>
+                <a href="index.html#">See all messages</a>
+              </li>
+            </ul>
+          </li>
+          <!-- inbox dropdown end -->
+          <!-- notification dropdown start-->
+          <li id="header_notification_bar" class="dropdown">
+            <a data-toggle="dropdown" class="dropdown-toggle" href="index.html#">
+              <i class="fa fa-bell-o"></i>
+              <span class="badge bg-warning">7</span>
+              </a>
+            <ul class="dropdown-menu extended notification">
+              <div class="notify-arrow notify-arrow-yellow"></div>
+              <li>
+                <p class="yellow">You have 7 new notifications</p>
+              </li>
+              <li>
+                <a href="index.html#">
+                  <span class="label label-danger"><i class="fa fa-bolt"></i></span>
+                  Server Overloaded.
+                  <span class="small italic">4 mins.</span>
+                  </a>
+              </li>
+              <li>
+                <a href="index.html#">
+                  <span class="label label-warning"><i class="fa fa-bell"></i></span>
+                  Memory #2 Not Responding.
+                  <span class="small italic">30 mins.</span>
+                  </a>
+              </li>
+              <li>
+                <a href="index.html#">
+                  <span class="label label-danger"><i class="fa fa-bolt"></i></span>
+                  Disk Space Reached 85%.
+                  <span class="small italic">2 hrs.</span>
+                  </a>
+              </li>
+              <li>
+                <a href="index.html#">
+                  <span class="label label-success"><i class="fa fa-plus"></i></span>
+                  New User Registered.
+                  <span class="small italic">3 hrs.</span>
+                  </a>
+              </li>
+              <li>
+                <a href="index.html#">See all notifications</a>
+              </li>
+            </ul>
+          </li>
+          <!-- notification dropdown end -->
+        </ul>
+        <!--  notification end -->
+      </div>
+      <div class="top-menu">
+        <ul class="nav pull-right top-menu">
+          <li><a class="logout" href="/login">Logout</a></li>
+        </ul>
+      </div>
+    </header>
+    <!--header end-->
+    <!-- **********************************************************************************************************************************************************
+        MAIN SIDEBAR MENU
+        *********************************************************************************************************************************************************** -->
+    <!--sidebar start-->
+    <aside>
+      <div id="sidebar" class="nav-collapse ">
+        <!-- sidebar menu start-->
+        <ul class="sidebar-menu" id="nav-accordion">
+<!--          <p class="centered"><a href="profile.html"><img src="img/ui-sam.jpg" class="img-circle" width="80"></a></p>-->
+          <h3 class="centered">ID:</h3>
+          <h5 class="centered">{{dict.admin_id}}</h5>
+          <li class="mt">
+            <a class="active" href="/server">
+              <i class="fa fa-dashboard"></i>
+              <span>管理主页</span>
+              </a>
+          </li>
+          <li class="sub-menu">
+            <a href="javascript:;">
+              <i class="fa fa-desktop"></i>
+              <span>用户管理</span>
+              </a>
+            <ul class="sub">
+              <li><a href="/checkuser">查看所有用户</a></li>
+              <li><a href="/scholar">查看学者</a></li>
+              <li><a href="/student">查看学生</a></li>
+              <li><a href="/authen_user">待认证信息</a></li>
+            </ul>
+          </li>
+          <li class="sub-menu">
+            <a href="javascript:;">
+              <i class="fa fa-cogs"></i>
+              <span>成果管理</span>
+            </a>
+            <ul class="sub">
+              <li><a href="/checkachievement">查看所有成果</a></li>
+              <li><a href="/check_newach_authen">待审批成果</a></li>
+              <li><a href="/addachievement">添加成果</a></li>
+                <li><a href="/add_get_achievement">爬虫添加成果</a></li>
+            </ul>
+          </li>
+          <li class="sub-menu">
+            <a href="javascript:;">
+              <i class="fa fa-book"></i>
+              <span>院系机构管理</span>
+            </a>
+            <ul class="sub">
+              <li><a href="/checkdepartment">查看所有院系</a></li>
+              <li><a href="/adddepartment">添加院系信息</a></li>
+            </ul>
+          </li>
+
+          <li class="sub-menu">
+            <a href="javascript:;">
+              <i class="fa fa-book"></i>
+              <span>举报信息管理</span>
+            </a>
+            <ul class="sub">
+              <li><a href="/checkreport">查看举报信息</a></li>
+            </ul>
+          </li>
+
+        </ul>
+        <!-- sidebar menu end-->
+      </div>
+    </aside>
+    <!--sidebar end-->
+    <!-- **********************************************************************************************************************************************************
+        MAIN CONTENT
+        *********************************************************************************************************************************************************** -->
+    <!--main content start-->
+
+
+    <section id="main-content">
+      <section class="wrapper site-min-height">
+        <h3><i class="fa fa-angle-right"></i> 数据统计</h3>
+        <!-- page start-->
+        <div id="morris">
+          <div class="row mt">
+            <div class="col-lg-6">
+              <div class="content-panel">
+                <h4><i class="fa fa-angle-right"></i> 成果总数变化统计</h4>
+                <div class="panel-body">
+                  <div id="hero-graph" class="graph"></div>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="content-panel">
+                <h4><i class="fa fa-angle-right"></i> 全年成果增长数</h4>
+                <div class="panel-body">
+                  <div id="hero-bar" class="graph"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row mt">
+            <div class="col-lg-6">
+              <div class="content-panel">
+                <h4><i class="fa fa-angle-right"></i> 全年用户增长数</h4>
+                <div class="panel-body">
+                  <div id="hero-area" class="graph"></div>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="content-panel">
+                <h4><i class="fa fa-angle-right"></i> 用户类型占比</h4>
+                <div class="panel-body">
+                  <div id="hero-donut" class="graph"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- page end-->
+      </section>
+    </section>
+
+
+
+    <!--main content end-->
+    <!--footer start-->
+<!--    <footer class="site-footer">-->
+<!--      <div class="text-center">-->
+<!--        <p>-->
+<!--          &copy; Copyrights <strong>Dashio</strong>. All Rights Reserved-->
+<!--        </p>-->
+<!--        <div class="credits">-->
+<!--          &lt;!&ndash;-->
+<!--            You are NOT allowed to delete the credit link to TemplateMag with free version.-->
+<!--            You can delete the credit link only if you bought the pro version.-->
+<!--            Buy the pro version with working PHP/AJAX contact form: https://templatemag.com/dashio-bootstrap-admin-template/-->
+<!--            Licensing information: https://templatemag.com/license/-->
+<!--          &ndash;&gt;-->
+<!--          Created with Dashio template by <a href="https://templatemag.com/">TemplateMag</a>-->
+<!--        </div>-->
+<!--        <a href="index.html#" class="go-top">-->
+<!--          <i class="fa fa-angle-up"></i>-->
+<!--          </a>-->
+<!--      </div>-->
+<!--    </footer>-->
+    <!--footer end-->
+  </section>
+  <!-- js placed at the end of the document so the pages load faster -->
+  <script src="/templates/Dashio/lib/jquery/jquery.min.js"></script>
+
+  <script src="/templates/Dashio/lib/bootstrap/js/bootstrap.min.js"></script>
+  <script class="include" type="text/javascript" src="/templates/Dashio/lib/jquery.dcjqaccordion.2.7.js"></script>
+  <script src="/templates/Dashio/lib/jquery.scrollTo.min.js"></script>
+  <script src="/templates/Dashio/lib/jquery.nicescroll.js" type="text/javascript"></script>
+  <script src="/templates/Dashio/lib/jquery.sparkline.js"></script>
+
+  <script src="/templates/Dashio/lib/raphael/raphael.min.js"></script>
+  <script src="/templates/Dashio/lib/morris/morris.min.js"></script>
+
+  <!--common script for all pages-->
+  <script src="/templates/Dashio/lib/common-scripts.js"></script>
+  <script type="text/javascript" src="/templates/Dashio/lib/gritter/js/jquery.gritter.js"></script>
+  <script type="text/javascript" src="/templates/Dashio/lib/gritter-conf.js"></script>
+  <!--script for this page-->
+<!--  <script src="/templates/Dashio/lib/morris-conf.js"></script>-->
+
+  <script src="/templates/Dashio/lib/sparkline-chart.js"></script>
+  <script src="/templates/Dashio/lib/zabuto_calendar.js"></script>
+  <script type="text/javascript">
+    $(document).ready(function() {
+      var unique_id = $.gritter.add({
+        // (string | mandatory) the heading of the notification
+        title: '高校教师成果管理系统',
+        // (string | mandatory) the text inside the notification
+        text: '左侧为功能导航栏，您可以通过点击左上图标隐藏导航栏。',
+        // (string | optional) the image to display on the left
+        // image: 'img/ui-sam.jpg',
+        // (bool | optional) if you want it to fade out on its own or just sit there
+        sticky: false,
+        // (int | optional) the time you want it to be alive for before fading out
+        time: 8000,
+        // (string | optional) the class name you want to apply to that specific message
+        class_name: 'my-sticky-class'
+      });
+
+      return false;
+    });
+  </script>
+  <script type="application/javascript">
+    $(document).ready(function() {
+      $("#date-popover").popover({
+        html: true,
+        trigger: "manual"
+      });
+      $("#date-popover").hide();
+      $("#date-popover").click(function(e) {
+        $(this).hide();
+      });
+
+      $("#my-calendar").zabuto_calendar({
+        action: function() {
+          return myDateFunction(this.id, false);
+        },
+        action_nav: function() {
+          return myNavFunction(this.id);
+        },
+        ajax: {
+          url: "show_data.php?action=1",
+          modal: true
+        },
+        legend: [{
+            type: "text",
+            label: "Special event",
+            badge: "00"
+          },
+          {
+            type: "block",
+            label: "Regular event",
+          }
+        ]
+      });
+    });
+
+    function myNavFunction(id) {
+      $("#date-popover").hide();
+      var nav = $("#" + id).data("navigation");
+      var to = $("#" + id).data("to");
+      console.log('nav ' + nav + ' to: ' + to.month + '/' + to.year);
+    }
+  </script>
+
+  <script type="text/javascript">
+    var Script = function () {
+
+      //morris chart
+
+      $(function () {
+        // data stolen from http://howmanyleft.co.uk/vehicle/jaguar_'e'_type
+        var year1 = {{dict.year}}-2;
+        var year2 = {{dict.year}}-1;
+        var ach = {{dict.ach_all}};
+        for(var i = 0; i < 7; i++){
+          if(ach[i] == -1 || ach[i] == 0){
+            ach[i] = null;
+          }
+        }
+        var tax_data = [
+          {"period": year1+ " Q4", "ach": ach[0]},
+          {"period": year2+ " Q2", "ach": ach[1]},
+          // {"period": year2+ " Q4", "ach": ach[2]},
+          // {"period": "{{dict.year}} Q1", "ach": ach[3]},
+          {"period": year2+ " Q4", "ach": 1},
+          {"period": "{{dict.year}} Q1", "ach": 2},
+          {"period": "{{dict.year}} Q2", "ach": ach[4]},
+          {"period": "{{dict.year}} Q3", "ach": ach[5]},
+          {"period": "{{dict.year}} Q4", "ach": ach[6]}
+        ];
+        Morris.Line({
+          element: 'hero-graph',
+          data: tax_data,
+          xkey: 'period',
+          ykeys: ['ach'],
+          labels: ['成果数'],
+          // lineColors:['#4ECDC4','#ed5565'],
+          lineColors:['#4ECDC4'],
+          hideHover: 'auto'
+        });
+
+        var user_counter = {{dict.user_counter}};
+        var month = {{dict.month}};
+        var number0 = (user_counter[month-1][0]-user_counter[month-1][1]-user_counter[month-1][2])/ user_counter[month-1][0]*100;
+        var number1 = user_counter[month-1][1]/ user_counter[month-1][0]*100;
+        var number2 = user_counter[month-1][2]/ user_counter[month-1][0]*100;
+        Morris.Donut({
+          element: 'hero-donut',
+          data: [
+            {label: '普通用户', value: number0 },
+            {label: '学者', value: number1 },
+            {label: '学生', value: number2 }
+          ],
+          colors: ['#3498db', '#2980b9', '#34495e'],
+          resize: true,
+          formatter: function (y) { return y + "%" }
+        });
+
+        var user_sub = {{dict.user_sub}};
+        Morris.Area({
+          element: 'hero-area',
+          data: [
+            {period: '{{dict.year}}-01', all: user_sub[0][0]-user_sub[0][1]-user_sub[0][2], scholar: user_sub[0][1], student: user_sub[0][2]},
+            {period: '{{dict.year}}-02', all: user_sub[1][0]-user_sub[1][1]-user_sub[1][2], scholar: user_sub[1][1], student: user_sub[1][2]},
+            {period: '{{dict.year}}-03', all: user_sub[2][0]-user_sub[2][1]-user_sub[2][2], scholar: user_sub[2][1], student: user_sub[2][2]},
+            {period: '{{dict.year}}-04', all: user_sub[3][0]-user_sub[3][1]-user_sub[3][2], scholar: user_sub[3][1], student: user_sub[3][2]},
+            {period: '{{dict.year}}-05', all: user_sub[4][0]-user_sub[4][1]-user_sub[4][2], scholar: user_sub[4][1], student: user_sub[4][2]},
+            {period: '{{dict.year}}-06', all: user_sub[5][0]-user_sub[5][1]-user_sub[5][2], scholar: user_sub[5][1], student: user_sub[5][2]},
+            {period: '{{dict.year}}-07', all: user_sub[6][0]-user_sub[6][1]-user_sub[6][2], scholar: user_sub[6][1], student: user_sub[6][2]},
+            {period: '{{dict.year}}-08', all: user_sub[7][0]-user_sub[7][1]-user_sub[7][2], scholar: user_sub[7][1], student: user_sub[7][2]},
+            {period: '{{dict.year}}-09', all: user_sub[8][0]-user_sub[8][1]-user_sub[8][2], scholar: user_sub[8][1], student: user_sub[8][2]},
+            {period: '{{dict.year}}-10', all: user_sub[9][0]-user_sub[9][1]-user_sub[9][2], scholar: user_sub[9][1], student: user_sub[9][2]},
+            {period: '{{dict.year}}-11', all: user_sub[10][0]-user_sub[10][1]-user_sub[10][2], scholar: user_sub[10][1], student: user_sub[10][2]},
+            {period: '{{dict.year}}-12', all: user_sub[11][0]-user_sub[11][1]-user_sub[11][2], scholar: user_sub[11][1], student: user_sub[11][2]}
+          ],
+
+          xkey: 'period',
+          ykeys: ['all', 'scholar', 'student'],
+          labels: ['普通用户', '学者', '学生'],
+          hideHover: 'auto',
+          lineWidth: 1,
+          pointSize: 5,
+          lineColors: ['#4a8bc2', '#ff6c60', '#a9d86e'],
+          ymax: 'auto',
+          fillOpacity: 0.5,
+          smooth: true
+        });
+
+        var ach_sub = {{dict.ach_sub}};
+        Morris.Bar({
+          element: 'hero-bar',
+          data: [
+            {device: '{{dict.year}}-01', ach: ach_sub[0]},
+            {device: '{{dict.year}}-02', ach: ach_sub[1]},
+            {device: '{{dict.year}}-03', ach: ach_sub[2]},
+            {device: '{{dict.year}}-04', ach: ach_sub[3]},
+            {device: '{{dict.year}}-05', ach: ach_sub[4]},
+            {device: '{{dict.year}}-06', ach: ach_sub[5]},
+            {device: '{{dict.year}}-07', ach: ach_sub[6]},
+            {device: '{{dict.year}}-08', ach: ach_sub[7]},
+            {device: '{{dict.year}}-09', ach: ach_sub[8]},
+            {device: '{{dict.year}}-10', ach: ach_sub[9]},
+            {device: '{{dict.year}}-11', ach: ach_sub[10]},
+            {device: '{{dict.year}}-12', ach: ach_sub[11]}
+          ],
+          xkey: 'device',
+          ykeys: ['ach'],
+          labels: ['增长成果数'],
+          barRatio: 0.4,
+          xLabelAngle: 35,
+          hideHover: 'auto',
+          barColors: ['#ac92ec']
+        });
+
+        new Morris.Line({
+          element: 'examplefirst',
+          xkey: 'year',
+          ykeys: ['value'],
+          labels: ['Value'],
+          data: [
+            {year: '2008', value: 20},
+            {year: '2009', value: 10},
+            {year: '2010', value: 5},
+            {year: '2011', value: 5},
+            {year: '2012', value: 20}
+          ]
+        });
+
+        $('.code-example').each(function (index, el) {
+          eval($(el).text());
+        });
+      });
+
+    }();
+
+  </script>
+</body>
+
+</html>
