@@ -49,6 +49,12 @@ urlpatterns = [
     url(r'^del_authen/(?P<authen_id>\d+)$', views.del_authen),
     url(r'^pass_authen/(?P<authen_id>\d+)$', views.pass_authen),
 	
+    # 成果学者相关
+    url(r'^scholar_achiev/(?P<id>\d+)$', views.check_scholar_achievement),
+    url(r'^achiev_scholar/(?P<id>\d+)$', views.check_achievement_scholar),
+    url(r'^last_page/$', views.to_last_page),
+    url(r'^department_scholar/(?P<id>\d+)$', views.check_department_scholar),
+
 
     #小程序用户
     url(r'^user_id_get', views.user_id_get),

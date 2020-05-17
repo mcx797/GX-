@@ -50,10 +50,10 @@ class AchievementAuthenTab(models.Model):
 
 
 class Department(models.Model):
-    d_id = models.AutoField(primary_key=True)
-    number = models.CharField(max_length=2)
-    name = models.CharField(max_length=30)
-    brief = models.CharField(max_length=600)
+    d_id = models.AutoField(primary_key=True) #学院id
+    number = models.CharField(max_length=2)   #学院号
+    name = models.CharField(max_length=30)    #学院名称
+    brief = models.CharField(max_length=600)  #学院简介
 
     class Meta:
         # managed = False
@@ -61,12 +61,14 @@ class Department(models.Model):
 
 
 class ScholarTab(models.Model):
-    user_id = models.IntegerField()
-    scholar_id = models.AutoField(primary_key=True)
-    school = models.CharField(max_length=30)
-    name = models.CharField(max_length=30)
-    email = models.CharField(max_length=30)
-    p_title = models.CharField(max_length=30)
+    user_id = models.IntegerField()#学者对应的用户id, 未认领时为-1
+    scholar_id = models.AutoField(primary_key=True)#学者在我们系统中的id，唯一标识
+    school = models.CharField(max_length=30)#学者学校
+    name = models.CharField(max_length=30)#学者姓名
+    email = models.CharField(max_length=30)#学者邮箱
+    p_title = models.CharField(max_length=30)#职称
+    flag = models.IntegerField()              #标志位
+    Scholar_Number = models.CharField(max_length = 30) #学者的工号    
 
     get_id = models.IntegerField(default=0)
     class Meta:
@@ -75,6 +77,7 @@ class ScholarTab(models.Model):
 
 
 class ScholarAchievementTab(models.Model):
+    id = models.AutoField(primary_key=True)
     scholar_id = models.IntegerField()
     a_id = models.IntegerField()
 
@@ -94,8 +97,9 @@ class SchAchAuthenTab(models.Model):
 
 
 class scholar_department_tab(models.Model):
-    scholar_id = models.IntegerField()
-    d_id = models.IntegerField()
+    id = models.AutoField(primary_key=True)
+    scholar_id = models.IntegerField()      #学者id
+    d_id = models.IntegerField()            #学院id
 
     class Meta:
         db_table = 'scholar_department_tab'

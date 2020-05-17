@@ -280,7 +280,7 @@
               <span>成果管理</span>
             </a>
             <ul class="sub">
-              <li class="active"><a href="/checkachievement">查看所有成果</a></li>
+              <li class="active"><a href="/checkachievement">查看成果</a></li>
               <li><a href="/check_newach_authen">待审批成果</a></li>
               <li><a href="/addachievement">添加成果</a></li>
                 <li><a href="/add_get_achievement">爬虫添加成果</a></li>
@@ -321,6 +321,10 @@
         <div class="row mb">
           <!-- page start-->
           <div class="content-panel">
+            {% if all_ach_dict.size %}
+            <h4 class="mb"><i class="fa fa-angle-right"></i> 学者ID: {{all_ach_dict.size.scholar_id}}  &nbsp;&nbsp;&nbsp;学者姓名: {{all_ach_dict.size.name}}</h4>
+            {% endif %}
+
             <div class="adv-table">
               <table cellpadding="0" cellspacing="0" border="0" class="display table table-bordered" id="hidden-table-info">
                 <thead>
@@ -356,6 +360,10 @@
                 </tbody>
               </table>
             </div>
+            {% if all_ach_dict.size %}
+<!--            <a href="/check_one_scholar/{{all_ach_dict.size.scholar_id}}" class="btn btn-theme">返回</a>-->
+            <a href="/last_page" class="btn btn-theme">返回</a>
+            {% endif %}
           </div>
           <!-- page end-->
         </div>
@@ -363,7 +371,6 @@
       </section>
       <!-- /wrapper -->
     </section>
-
 
     <!--main content end-->
 <!--    footer start-->

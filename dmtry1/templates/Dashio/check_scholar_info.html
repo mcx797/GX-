@@ -356,6 +356,14 @@
                                 </div>
                             </div>
                             <div class="form-group">
+                                <label class="col-sm-2 col-sm-2 control-label">学者工号</label>
+                                <div class="col-sm-10">
+                                    <h5>{{check_sch.sch_info.Scholar_Number}}</h5>
+                                    <!--                                    <input type="text" class="form-control" name="d_name" id="d_name" placeholder="院系名称" data-rule="required" data-msg="请输入正确院系名称" required="required">-->
+                                    <!--                                    <input type="text" class="form-control" name="d_name" id="d_name" value="{{edit_dep.dep_info.name}}" required="required">-->
+                                </div>
+                            </div>
+                            <div class="form-group">
                                 <label class="col-sm-2 col-sm-2 control-label">邮箱</label>
                                 <div class="col-sm-10">
                                     <h5>{{check_sch.sch_info.email}}</h5>
@@ -371,13 +379,21 @@
                                     <!--                                    <input type="text" class="form-control" name="d_name" id="d_name" value="{{edit_dep.dep_info.name}}" required="required">-->
                                 </div>
                             </div>
-
+                            <div class="form-group">
+                                <label class="col-sm-2 col-sm-2 control-label">查看学者的相关成果</label>
+                                <div class="col-sm-10">
+                                    <a href="/scholar_achiev/{{check_sch.sch_info.scholar_id}}" class="btn btn-theme">查看相关成果</a>
+                                    <!--                                    <input type="text" class="form-control" name="d_name" id="d_name" placeholder="院系名称" data-rule="required" data-msg="请输入正确院系名称" required="required">-->
+                                    <!--                                    <input type="text" class="form-control" name="d_name" id="d_name" value="{{edit_dep.dep_info.name}}" required="required">-->
+                                </div>
+                            </div>
                             <!--                            <div class="loading"></div>-->
                             <!--                            <div class="error-message"></div>-->
                             <!--                            <div class="sent-message">添加请求已收到</div>-->
 
                             <div class="form-send">
-                                <a href="/scholar" class="btn btn-theme">返回</a>
+<!--                                <a href="/scholar" class="btn btn-theme">返回</a>-->
+                                <a href="/last_page" class="btn btn-theme">返回</a>
                             </div>
                             <!--                        </form>-->
                         </form>
@@ -393,7 +409,11 @@
                 </div>
                 <!-- col-lg-12-->
             </div>
-
+            {% if check_sch.err_msg %}
+            <script>
+                alert('{{ check_sch.err_msg }}');
+            </script>
+            {% endif %}
             <!-- /row -->
             <!--            <div class="row mt">-->
             <!--                <div class="col-lg-6 col-md-6 col-sm-6">-->

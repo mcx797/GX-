@@ -322,6 +322,12 @@
         <div class="row mb">
           <!-- page start-->
           <div class="content-panel">
+            {% if all_scholar.size %}
+            <h4 class="mb"><i class="fa fa-angle-right"></i> 成果ID: {{all_scholar.size.a_id}}  &nbsp;&nbsp;&nbsp;成果名称: {{all_scholar.size.name}}</h4>
+            {% endif %}
+            {% if all_scholar.dep %}
+            <h4 class="mb"><i class="fa fa-angle-right"></i> 院系ID: {{all_scholar.dep.d_id}}  &nbsp;&nbsp;&nbsp;院系名称: {{all_scholar.dep.name}}</h4>
+            {% endif %}
             <div class="adv-table">
               <table cellpadding="0" cellspacing="0" border="0" class="display table table-bordered" id="hidden-table-info">
                 <thead>
@@ -359,6 +365,14 @@
                 </tbody>
               </table>
             </div>
+            {% if all_scholar.size%}
+<!--            <a href="/check_one_ach/{{all_scholar.size.a_id}}" class="btn btn-theme">返回</a>-->
+            <a href="/last_page" class="btn btn-theme">返回</a>
+            {% endif %}
+            {% if all_scholar.dep%}
+            <!--            <a href="/check_one_ach/{{all_scholar.size.a_id}}" class="btn btn-theme">返回</a>-->
+            <a href="/last_page" class="btn btn-theme">返回</a>
+            {% endif %}
           </div>
           <!-- page end-->
         </div>

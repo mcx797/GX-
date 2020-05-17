@@ -8,7 +8,7 @@ from dm_demo.models import AchievementTab
 from dm_demo.models import Department
 from dm_demo.models import AchievementAuthenTab
 from dm_demo.models import ScholarTab
-from dm_demo.models import ScholarAchievementTab
+from dm_demo.models import ScholarAchievementTab, scholar_department_tab
 from dm_demo.models import SchAchAuthenTab
 from dm_demo.models import ReportTab
 from dm_demo.models import user_tab, student_tab
@@ -25,6 +25,8 @@ from collections import defaultdict
 import csv
 import json
 import re
+import xlrd
+import os
 
 relation_all_file = 'data/relation_all.csv'
 
@@ -36,6 +38,44 @@ relation_all_file = 'data/relation_all.csv'
     charset: 响应的编码字符集
     status_code: HTTP响应的状态码
 """
+
+
+
+
+def ScholarIn():
+	path = '/scholar_all.xlsx'
+	pwd = os.path.dirname(__file__)
+	print(pwd)
+	getfile = xlrd.open_workbook(pwd + path)
+	table = getfile.sheet_by_index(0)
+	rows = table.nrows
+	cols = table.ncols
+	for i in range(rows):
+                a = {}
+                cell_values = table.cell_value(i, 0)
+                a['old_id'] = int(table.cell_value(i, 0))
+                a['name'] = table.cell_value(i, 2)
+                a['department'] = table.cell_value(i, 6)
+                a['p_title'] = table.cell_value(i, 10) #职称
+                a['email'] = table.cell_value(i, 14)
+                a['phone'] = table.cell_value(i, 16)
+                a['way'] = table.cell_value(i, 18)   #研究方向
+                a['jianjie'] = table.cell_value(i, 19)  #简介
+                print(a)
+                ScholarTab(name = a['name'], user_id = -1, email = a['email'], p_title = a['p_title'], flag = 0,  get_id = a['old_id']).save()
+                if(len(Department.objects.filter(name = a['department'])) == 0):
+                        Department(name = a['name']).save()
+                sc1 = ScholarTab.objects.get(get_id = a['old_id'])
+                d1 = Department.objects.get(name = a['department'])
+                scholar_department_tab(scholar_id = sc1.scholar_id, d_id = d1.d_id).save()
+
+
+
+
+
+
+
+
 
 """
 hello 为一个视图函数，每个视图函数必须第一个参数为request。哪怕用不到request。
@@ -54,6 +94,9 @@ user_sub = [[0, 0, 0] for i in range(12)]
 ach_all = [-1]*7
 ach_counter = [0]*12
 ach_sub = [0]*12
+sch_info = ''
+stu_info = ''
+path=[]
 
 
 def hello(request):
@@ -92,7 +135,7 @@ def homepage(request):
         last2 = user_counter[month-2][2]
         last_ach = ach_counter[month-2]
     user_counter[month-1][0] = user_tab.objects.count()
-    user_counter[month-1][1] = ScholarTab.objects.count()
+    user_counter[month-1][1] = len(ScholarTab.objects.filter(flag=1))
     user_counter[month-1][2] = student_tab.objects.count()
     ach_counter[month-1] = AchievementTab.objects.count()
     user_sub[month-1][0] = user_counter[month-1][0] - last0
@@ -131,8 +174,11 @@ def login(request):
 # 查看成果——对成果进行操作
 def check_ach(request):
     if request.method == "GET":  # 如果提交方式为GET即显示check_achiev.html
+        size = ""
         all_ach = AchievementTab.objects.filter()
-        dict = {'all_achievements': all_ach, 'admin_id': admin_id}
+        dict = {'all_achievements': all_ach, 'admin_id': admin_id, 'size': size}
+        if "img" not in request.path_info:
+            path.append(request.path_info)
         return render(request, 'Dashio/check_achiev.html', {'all_ach_dict': dict})
     else:  # 如果提交方式为POST
         all_ach = AchievementTab.objects.filter()
@@ -147,9 +193,13 @@ def delete_one_ach(request, id):
 
 # 查看某项成果的详细信息
 def check_one_ach(request, id):
+    err_msg = ''
     if request.method == "GET":
         ach_info = AchievementTab.objects.filter(a_id=id)[0]
-        dict = {'admin_id': admin_id, 'ach_info': ach_info}
+        dict = {'admin_id': admin_id, 'ach_info': ach_info, 'err_msg': err_msg}
+        if "img" not in request.path_info:
+            path.append(request.path_info)
+            # print(request.path_info)
         return render(request, "Dashio/check_achiev_detail.html", {'check_ach': dict})
     else:
         return
@@ -337,6 +387,8 @@ def check_department(request):
     if request.method == "GET":  # 如果提交方式为GET即显示login.html
         all_dep = Department.objects.filter()
         dict = {'all_departments': all_dep, 'admin_id': admin_id}
+        if "img" not in request.path_info:
+            path.append(request.path_info)
         return render(request, 'Dashio/check_department.html', {'all_dep_dict': dict})
     else:  # 如果提交方式为POST
         return
@@ -350,9 +402,12 @@ def delete_one_dep(request, id):
 
 # 查看某个院系的详细信息
 def check_one_dep(request, id):
+    err_msg = ''
     if request.method == "GET":
         dep_info = Department.objects.filter(d_id=id)[0]
-        dict = {'admin_id': admin_id, 'dep_info': dep_info}
+        dict = {'admin_id': admin_id, 'dep_info': dep_info, 'err_msg': err_msg}
+        if "img" not in request.path_info:
+            path.append(request.path_info)
         return render(request, "Dashio/check_dep_brief.html", {'check_dep': dict})
     else:
         return
@@ -450,8 +505,12 @@ def check_one_report(request, id):
 # 用户相关
 # 查看学者用户
 def scholar(request):
-    all_scholar = ScholarTab.objects.all()
-    dict = {'admin_id': admin_id, 'all_sch': all_scholar}
+    size = ''
+    dep = ''
+    all_scholar = ScholarTab.objects.all(flag=1)
+    dict = {'admin_id': admin_id, 'all_sch': all_scholar, 'size': size, 'dep': dep}
+    if "img" not in request.path_info:
+        path.append(request.path_info)
     return render(request, 'Dashio/scholar.html', {'all_scholar': dict})
 
 
@@ -642,9 +701,85 @@ def del_new_achievement(request, id):
     return redirect('/add_get_achievement')
 
 
+# ++++++++++++++++++++++++++++++++++++++
+# 查看某位学者相关的成果信息
+def check_scholar_achievement(request, id):
+    scholar_id = id
+    # 存在关联信息
+    if ScholarAchievementTab.objects.filter(scholar_id=scholar_id).exists():
+        size = ScholarTab.objects.filter(scholar_id=scholar_id)[0]
+        all_ach = []
+        for i in ScholarAchievementTab.objects.filter(scholar_id=scholar_id):
+            all_ach.append(AchievementTab.objects.filter(a_id=i.a_id)[0])
+        dict = {'all_achievements': all_ach, 'admin_id': admin_id, 'size': size}
+        if "img" not in request.path_info:
+            path.append(request.path_info)
+            print(request.path_info)
+        return render(request, 'Dashio/check_achiev.html', {'all_ach_dict': dict})
+    else:
+        err_msg = "该学者暂无可查询成果"
+        sch_info = ScholarTab.objects.filter(scholar_id=scholar_id)[0]
+        dict = {'admin_id': admin_id, 'sch_info': sch_info, 'err_msg': err_msg}
+        return render(request, "Dashio/check_scholar_info.html", {'check_sch': dict})
+
+
+# 查看某一成果的相关学者
+def check_achievement_scholar(request, id):
+    a_id = id
+    dep = ''
+    # 存在关联信息
+    if scholar_department_tab.objects.filter(a_id=a_id).exists():
+        size = AchievementTab.objects.filter(a_id=a_id)[0]
+        all_scholar = []
+        for i in scholar_department_tab.objects.filter(a_id=a_id):
+            all_scholar.append(ScholarTab.objects.filter(scholar_id=i.scholar_id)[0])
+        dict = {'admin_id': admin_id, 'all_sch': all_scholar, 'size': size, 'dep': dep}
+        if "img" not in request.path_info:
+            path.append(request.path_info)
+            print(request.path_info)
+        return render(request, 'Dashio/scholar.html', {'all_scholar': dict})
+    else:
+        err_msg = "该成果暂无可查询相关学者信息"
+        ach_info = AchievementTab.objects.filter(a_id=a_id)[0]
+        dict = {'admin_id': admin_id, 'ach_info': ach_info, 'err_msg': err_msg}
+        return render(request, "Dashio/check_achiev_detail.html", {'check_ach': dict})
+
+
+# 查看某一院系的相关学者
+def check_department_scholar(request, id):
+    d_id = id
+    # 存在关联信息
+    if ScholarDepartmentTab.objects.filter(d_id=d_id).exists():
+        dep = Department.objects.filter(d_id=d_id)[0]
+        size = ''
+        all_scholar = []
+        for i in ScholarDepartmentTab.objects.filter(d_id=d_id):
+            all_scholar.append(ScholarTab.objects.filter(scholar_id=i.scholar_id)[0])
+        dict = {'admin_id': admin_id, 'all_sch': all_scholar, 'size': size, 'dep': dep}
+        if "img" not in request.path_info:
+            path.append(request.path_info)
+            print(request.path_info)
+        return render(request, 'Dashio/scholar.html', {'all_scholar': dict})
+    else:
+        err_msg = "该成果暂无可查询相关学者信息"
+        dep_info = Department.objects.filter(d_id=d_id)[0]
+        dict = {'admin_id': admin_id, 'dep_info': dep_info, 'err_msg': err_msg}
+        return render(request, "Dashio/check_dep_brief.html", {'check_dep': dict})
+
+
+# 返回上一页
+def to_last_page(request):
+    path.pop()
+    last_path = path[-1]
+    path.pop()
+    return redirect(last_path)
+
+
+
+
 
 def user_id_get(request):
-    #user_table.objects.filter(wechatid=request.GET[''])
+	ScholarIn()
 	retData = {}
 	user = {}
 	if len(user_tab.objects.filter(wechatid = request.GET['wxNickName'])) == 0:

@@ -72,6 +72,13 @@ urlpatterns = [
     url(r'^pass_new_achievement/(?P<id>\d+)$', dview.pass_new_achievement),
     url(r'^del_new_achievement/(?P<id>\d+)$', dview.del_new_achievement),
 
+    # 成果学者相关
+    url(r'^scholar_achiev/(?P<id>\d+)$', dview.check_scholar_achievement),
+    url(r'^achiev_scholar/(?P<id>\d+)$', dview.check_achievement_scholar),
+    url(r'^last_page/$', dview.to_last_page),
+    url(r'^department_scholar/(?P<id>\d+)$', dview.check_department_scholar),
+
+
     #  小程序相关
     url(r'^user_id_get/', dview.user_id_get),
     url(r'^wx_register/', dview.wx_register),
