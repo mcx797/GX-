@@ -24,6 +24,7 @@ import datetime
 from collections import defaultdict
 import csv
 import json
+import re
 
 relation_all_file = 'data/relation_all.csv'
 
@@ -242,23 +243,25 @@ def check_newach_authen(request):
         return
 
 
+# 查看新添成果认证详情
 def check_one_newach_authen(request, id):
-    global newach_auth
+    authen_id = id
     if request.method == "GET":
         auth_info = AchievementAuthenTab.objects.filter(id=id)[0]
-        newach_auth = auth_info
+        # newach_auth = auth_info
         scholar_id = auth_info.scholar_id
         scholar_name = ScholarTab.objects.filter(scholar_id=scholar_id)[0].name
         dict = {'admin_id': admin_id, 'auth_info': auth_info, 'scholar_name': scholar_name}
         return render(request, "Dashio/check_newachiev_details.html", {'check_newauth': dict})
     else:
+        newach_auth = AchievementAuthenTab.objects.filter(id=authen_id)[0]
         # 通过认证，加入成果表
         AchievementTab.objects.create(name=newach_auth.a_name, year=newach_auth.year,
                                       author_name=newach_auth.author_name, citation=newach_auth.citation,
                                       j_a_name=newach_auth.j_a_name, file=newach_auth.file, link=newach_auth.link)
-        AchievementAuthenTab.objects.filter(id=id).delete()
+        AchievementAuthenTab.objects.filter(id=newach_auth.id).delete()
         a_id = AchievementTab.objects.filter(name = newach_auth.a_name)[0].a_id
-        newach_auth = AchievementAuthenTab.objects.filter(id=id)[0]
+        # newach_auth = AchievementAuthenTab.objects.filter(id=id)[0]
         ScholarAchievementTab.objects.create(scholar_id=newach_auth.scholar_id, a_id = a_id)
         # 将相同成果名的成果申请加入到关联申请表中
         auths = AchievementAuthenTab.objects.filter(a_name = newach_auth.a_name)
@@ -275,6 +278,12 @@ def check_one_newach_authen(request, id):
         return render(request, 'Dashio/check_achiev_authen.html', {'ach_authen': dict})
 
 
+# 删除成果认证信息
+def delete_one_newauthen(request, id):
+    AchievementAuthenTab.objects.filter(id=id).delete()
+    return redirect('/check_newach_authen')
+
+
 class NewSchAchAuthen():
     def __init__(self, auth):
         self.authen = auth
@@ -282,6 +291,7 @@ class NewSchAchAuthen():
         self.scholar_name = ScholarTab.objects.filter(scholar_id=auth.scholar_id)[0].name
 
 
+# 查看成果关联认证详情
 def check_one_sch_ach_authen(request, id):
     global sch_ach_auth
     if request.method == "GET":
@@ -314,6 +324,12 @@ def check_one_sch_ach_authen(request, id):
         err_msg = "成果关联认证成功"
         dict = {'all_authen1': all_authen1, 'all_authen2': newauth, 'admin_id': admin_id, 'err_msg':err_msg}
         return render(request, 'Dashio/check_achiev_authen.html', {'ach_authen': dict})
+
+
+# 删除成果关联认证
+def delete_one_schach_authen(request, id):
+    SchAchAuthenTab.objects.filter(id=id).delete()
+    return redirect('/check_newach_authen')
 
 
 # 查看院系信息——对院系信息进行操作
@@ -446,6 +462,42 @@ def del_scholar(request, id):
     return redirect('/scholar')
 
 
+# 查看学者信息详情
+def check_one_scholar(request, id):
+    if request.method == "GET":
+        sch_info = ScholarTab.objects.filter(user_id=id)[0]
+        dict = {'admin_id': admin_id, 'sch_info': sch_info}
+        return render(request, "Dashio/check_scholar_info.html", {'check_sch': dict})
+    else:
+        return
+
+
+# 修改学者信息详情
+def edit_one_scholar(request, id):
+    global sch_info
+    err_msg = ""
+    user_id=id
+    if request.method == "GET":
+        sch_info = ScholarTab.objects.filter(user_id=id)[0]
+        dict = {'admin_id': admin_id, 'sch_info': sch_info, 'err_msg': err_msg}
+        return render(request, "Dashio/edit_scholar.html", {'edit_sch': dict})
+    else:  # 如果提交方式为POST
+        name = request.POST.get('name')
+        school = request.POST.get('school')
+        email = request.POST.get('email')
+        p_title = request.POST.get('p_title')
+        if len(email) <= 7 or re.match("^.+\\@(\\[?)[a-zA-Z0-9\\-\\.]+\\.([a-zA-Z]{2,3}|[0-9]{1,3})(\\]?)$", email) is None:
+            err_msg = "邮箱格式错误"
+            dict = {'admin_id': admin_id, 'sch_info': sch_info, 'err_msg': err_msg}
+            return render(request, 'Dashio/edit_scholar.html', {'edit_sch': dict})
+        else:
+            ScholarTab.objects.filter(user_id = user_id).update(name=name, school=school, email=email, p_title=p_title)
+            err_msg = "学者信息修改成功"
+            sch_info = ScholarTab.objects.filter(user_id=user_id)[0]
+            dict = {'admin_id': admin_id, 'sch_info': sch_info, 'err_msg': err_msg}
+            return render(request, "Dashio/edit_scholar.html", {'edit_sch': dict})
+
+
 # 查看学生用户
 def student(request):
     all_student = student_tab.objects.all()
@@ -460,11 +512,58 @@ def del_student(request,id):
     return redirect('/student')
 
 
+# 查看学生信息详情
+def check_one_student(request, id):
+    if request.method == "GET":
+        stu_info = student_tab.objects.filter(user_id=id)[0]
+        dict = {'admin_id': admin_id, 'stu_info': stu_info}
+        return render(request, "Dashio/check_student_info.html", {'check_student': dict})
+    else:
+        return
+
+
+# 修改学生信息详情
+def edit_one_student(request, id):
+    global stu_info
+    err_msg = ""
+    user_id=id
+    if request.method == "GET":
+        stu_info = student_tab.objects.filter(user_id=id)[0]
+        dict = {'admin_id': admin_id, 'stu_info': stu_info, 'err_msg': err_msg}
+        return render(request, "Dashio/edit_student.html", {'edit_student': dict})
+    else:  # 如果提交方式为POST
+        name = request.POST.get('name')
+        school = request.POST.get('school')
+        email = request.POST.get('email')
+        if len(email) <= 7 or re.match("^.+\\@(\\[?)[a-zA-Z0-9\\-\\.]+\\.([a-zA-Z]{2,3}|[0-9]{1,3})(\\]?)$", email) is None:
+            err_msg = "邮箱格式错误"
+            dict = {'admin_id': admin_id, 'stu_info': stu_info, 'err_msg': err_msg}
+            return render(request, "Dashio/edit_student.html", {'edit_student': dict})
+        else:
+            student_tab.objects.filter(user_id = user_id).update(name=name, school=school, email=email)
+            err_msg = "学生信息修改成功"
+            stu_info = student_tab.objects.filter(user_id=user_id)[0]
+            dict = {'admin_id': admin_id, 'stu_info': stu_info, 'err_msg': err_msg}
+            return render(request, "Dashio/edit_student.html", {'edit_student': dict})
+
+
 # 查看用户身份申请
 def authen_user(request):
     all_authen = authen_tab.objects.all()
-    dict = {'admin_id': admin_id, 'all_authen': all_authen}
+    new_authen = []
+    for authen in all_authen:
+        new_authen.append(NewAuthen(authen))
+    dict = {'admin_id': admin_id, 'all_authen': new_authen}
     return render(request, 'Dashio/authen_user.html', {'all_authen_dict': dict})
+
+
+class NewAuthen():
+    def __init__(self, auth):
+        self.authen = auth
+        if auth.identity is 1:
+            self.idenstr = '学者'
+        else:
+            self.idenstr = '学生'
 
 
 # 删除身份申请
@@ -481,10 +580,10 @@ def pass_authen(request, authen_id):  # 通过后向学者表/用户表中添加
     user = user_authen_tab.objects.get(authen_id=authen_id)
     user_info = user_tab.objects.get(user_id=user.user_id)
     if authen_info.identity == 1:  # 学者
-        ScholarTab.objects.create(user_id=user_info.user_id, school="default", name=user_info.user_name, email=authen_info.email, p_title="default")
+        ScholarTab.objects.create(user_id=user_info.user_id, school="buaa", name=user_info.user_name, email=authen_info.email, p_title="default")
         user_tab.objects.filter(user_id=user_info.user_id).update(authority=1)
     elif authen_info.identity == 2:  # 学生
-        student_tab.objects.create(user_id=user_info.user_id,school="default", name=user_info.user_name,email=authen_info.email)
+        student_tab.objects.create(user_id=user_info.user_id,school="buaa", name=user_info.user_name,email=authen_info.email)
         user_tab.objects.filter(user_id=user_info.user_id).update(authority=2)
     return redirect('/del_authen/'+authen_id)
 
@@ -501,6 +600,11 @@ def check_all_user(request):
 
 # 删除用户信息
 def delete_user(request, id):
+    user = user_tab.objects.get(user_id=id)
+    if user.authority == 1:  #学者
+        ScholarTab.objects.filter(user_id=id).delete()
+    if user.authority == 2:  #学生
+        student_tab.objects.filter(user_id=id).delete() 
     user_tab.objects.filter(user_id=id).delete()
     return redirect('/checkuser')
 
@@ -542,26 +646,37 @@ def del_new_achievement(request, id):
 def user_id_get(request):
     #user_table.objects.filter(wechatid=request.GET[''])
 	retData = {}
+	user = {}
 	if len(user_tab.objects.filter(wechatid = request.GET['wxNickName'])) == 0:
 		user_tab(user_name = request.GET['wxNickName'], wechatid = request.GET['wxNickName'], authority = 0).save()
-	t1 = user_tab.objects.get(wechatid = request.GET['wxNickName'])
-	retData['id'] = t1.user_id
-	retData['wechatid'] = t1.wechatid
-	retData['authority'] = t1.authority
+	else:
+		user = user_tab.objects.get(wechatid = request.GET['wxNickName'])
+		if user.authority == 1:
+			scholar = ScholarTab.objects.get(user_id = user.user_id)
+			retData['school'] = scholar.school
+			retData['name'] = scholar.name
+			retData['email'] = scholar.email
+			retData['sno'] = scholar.scholar_id
+		if user.authority == 2:
+			student = student_tab.objects.get(user_id = user.user_id)
+			retData['school'] = student.school
+			retData['name'] = student.name
+			retData['email'] = student.email
+	retData['id'] = user.user_id
+	retData['authority'] = user.authority
 	return HttpResponse(json.dumps(retData), content_type = "application/json")
 
+
 def wx_register(request):
-	print(request.GET['wechatid'])
-	print(request.GET['school'])
 	autho = 0
-	print(request.GET['authority'])
 	if (request.GET['authority'] == "学生用户"):
 		autho = 2
 	if (request.GET['authority'] == "学者用户"):
 		autho = 1
-	print(autho)
 	if (autho == 1 or autho == 2):
+		print(request.GET['mail'])
 		authen_tab(email = request.GET['mail'], name = request.GET['name'], sno = request.GET['schoolid'], identity = autho).save()
+		user_tab.objects.filter(wechatid = request.GET['wechatid']).update(user_name = request.GET['name'])
 		retData = {}
 		retData['b'] = 'b'
 		t1 = user_tab.objects.get(wechatid = request.GET['wechatid'])
@@ -580,6 +695,13 @@ def hasconnect_A(paper_id, wxid):
 		return 1
 	return 0
 
+
+
+def hasconnect_B(paper_id, wxid):
+	t1 = user_tab.objects.get(wechatid = wxid)
+	if len(collect_scholar_tab.objects.filter(user_id = t1.user_id, scholar_id = paper_id)) == 0:
+		return 1
+	return 0
 
 def paperInitial(request):
         number = 1
@@ -612,6 +734,7 @@ def searchTeacher(request):
 			a["usseData"] = i.name
 			a["cx"] = i.school
 			a["time"] = i.email
+			#a["isShow"] = hasconnect_B(i.scholar_id, request.GET['WXID'])
 			number = number + 1
 			retData.append(a)
 	return HttpResponse(json.dumps(retData), content_type = "application/json") 
@@ -650,13 +773,32 @@ def teacherInitial(request):
                         a["usseData"] = i.name
                         a["cx"] = i.school
                         a["time"] = i.email
+			#a['isShow'] = hasconnect_B(i.scholar_id, request.GET['WXID'])
                         number = number + 1
                         retData.append(a)
         return HttpResponse(json.dumps(retData), content_type = "application/json")
 
 
+'''
+def collectScholar(request):
+	retData = {}
+	ScholarName = request.GET['scholarName']
+	isCollect = request.GET['isCollect']
+	WXID = request.GET['WXID']
+	print(ScholarName)
+	print(isCollect)
+	print(WXID)
+	t1 = user_tab.objects.get(wechatid = WXID)
+	t2 = scholarTab.objects.get(name = ScholarName)
+		if (isCollect == '1'):
+			print("hahaha")
+			collect_scholar_tab(user_id = t1.user_id, scholar_id = t2.scholar_id).save()
+		else:
+			print("xixixi")
+			collect_scholar_tab(user_id = t1.user_id, scholar_id = t2.scholar_id).delete()
+	return HttpResponse(json.dumps(retData), content_type = "application/json")
 
-
+'''
 
 def collectPaper(request):
 	retData = {}
@@ -678,7 +820,9 @@ def collectPaper(request):
 def chengguoup(request):
 	retData = {}
 	print("kkkkk")
-	AchievementAuthenTab(a_name = request.GET['name'], scholar_id = 1, citation = 1).save()
+	t1 = user_tab.objects.get(wechatid = request.GET['WXID'])
+	scholar = ScholarTab.objects.get(user_id = t1.user_id)
+	AchievementAuthenTab(a_name = request.GET['name'], scholar_id = scholar.scholar_id, citation = request.GET['citation'], year = request.GET['year']).save()
 	print("hahaha")
 	retData['a'] = 'a'
 	return HttpResponse(json.dumps(retData), content_type = "application/json")
@@ -710,8 +854,22 @@ def Identification(request):
 	brief = request.GET['brief']
 	wxid = request.GET['WXID']
 	user = user_tab.objects.get(wechatid = wxid)
-	ReportTab(id = user.user_id, user_name = wxid, information = brief, flag = 0).save()
+	#Achie = AchievementTab.objects.get(name = brief)
+	#if len (Achie > 1) :
+	#	Achie = Achie[0]
+	ReportTab(id = user.user_id, user_name = wxid, information = brief + "论文信息存在异常", flag = 0).save()
 	return HttpResponse(json.dumps(retData), content_type = "application/json")
 
 
-	
+def TeacherIdentification(request):
+	retData = {}
+	name = request.GET['brief']
+	wxid = request.GET['WXID']
+	print(name)
+	print(name)
+	print(name)
+	user = user_tab.objects.get(wechatid = wxid)
+	print(wxid)
+	user1 = user_tab.objects.get(user_name = name)
+	ReportTab(id = user.user_id, user_name = name, information = "身份信息存在异常", flag = 0).save()
+	return HttpResponse(json.dumps(retData), content_type = "application/json")	

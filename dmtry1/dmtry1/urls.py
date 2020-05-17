@@ -35,8 +35,10 @@ urlpatterns = [
 
     url(r'^check_newach_authen/', dview.check_newach_authen),
     url(r'^check_newauthen_details/(?P<id>\d+)$', dview.check_one_newach_authen),
+    url(r'^delete_newauthen/(?P<id>\d+)$', dview.delete_one_newauthen),
     # url(r'^check_sch_ach_authen/', dview.check_sch_ach_authen),
     url(r'^check_schach_authen_details/(?P<id>\d+)$', dview.check_one_sch_ach_authen),
+    url(r'^delete_schach_authen/(?P<id>\d+)$', dview.delete_one_schach_authen),
 
     url(r'^checkdepartment/', dview.check_department),
     url(r'^delete_one_dep/(?P<id>\d+)$', dview.delete_one_dep),
@@ -51,8 +53,12 @@ urlpatterns = [
     # 用户相关
     url(r'^scholar/$', dview.scholar),
     url(r'^delete_scholar/(?P<id>\d+)$', dview.del_scholar),
+    url(r'^edit_one_scholar/(?P<id>\d+)$', dview.edit_one_scholar),
+    url(r'^check_one_scholar/(?P<id>\d+)$', dview.check_one_scholar),
     url(r'^student/$', dview.student),
     url(r'^delete_student/(?P<id>\d+)$', dview.del_student),
+    url(r'^edit_one_student/(?P<id>\d+)$', dview.edit_one_student),
+    url(r'^check_one_student/(?P<id>\d+)$', dview.check_one_student),
     url(r'^checkuser/$', dview.check_all_user),
     url(r'^delete_user/(?P<id>\d+)$', dview.delete_user),
 
@@ -77,4 +83,5 @@ urlpatterns = [
     url(r'^chengguoup', dview.chengguoup),
     url(r'^getCollection', dview.getCollection),
     url(r'^Identification', dview.Identification),
+    url(r'^TeacherIdentification', dview.TeacherIdentification),
 ]

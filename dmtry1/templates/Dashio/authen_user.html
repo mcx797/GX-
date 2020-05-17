@@ -338,14 +338,14 @@
                 {% for authen in all_authen_dict.all_authen %}
 <!--                <tr class="gradeX">-->
                   <tr>
-                  <td>{{authen.name}}</td>
-                  <td class="center">{{authen.sno}}</td>
-                  <td class="center hidden-phone">{{authen.email}}</td>
-                  <td class="center hidden-phone">{{authen.identity}}</td>
+                  <td>{{authen.authen.name}}</td>
+                  <td class="center">{{authen.authen.sno}}</td>
+                  <td class="center hidden-phone">{{authen.authen.email}}</td>
+                  <td class="center hidden-phone">{{authen.idenstr}}</td>
                       <td>
-                          <a href="javascript:if(confirm('确实要通过该申请吗?'))location='/pass_authen/{{authen.authen_id}}'" class="btn btn-success btn-xs"><i class="fa fa-check"></i></a>
+                          <a href="javascript:if(confirm('确定要通过该申请吗?'))location='/pass_authen/{{authen.authen.authen_id}}'" class="btn btn-success btn-xs"><i class="fa fa-check"></i></a>
 <!--                          <a href="/edit_one_ach/{{ach.id}}" class="btn btn-primary btn-xs"><i class="fa fa-pencil"></i></a>-->
-                          <a href="javascript:if(confirm('确实要拒绝该申请吗?'))location='/del_authen/{{authen.authen_id}}'" class="btn btn-danger btn-xs"><i class="fa fa-trash-o "></i></a>
+                          <a href="javascript:if(confirm('确定要拒绝该申请吗?'))location='/del_authen/{{authen.authen.authen_id}}'" class="btn btn-danger btn-xs"><i class="fa fa-trash-o "></i></a>
 <!--                    <input class="btn btn-success btn-xs" type ="submit" value="详情" name="{{ach.id}}">-->
                       </td>
 

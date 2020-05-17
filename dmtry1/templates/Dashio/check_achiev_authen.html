@@ -372,6 +372,7 @@
                                                 <td class="center hidden-phone">{{authen.year}}</td>
                                                 <td class="center hidden-phone">
                                                     <a href="/check_newauthen_details/{{authen.id}}" class="btn btn-success btn-xs"><i class="fa fa-check"></i></a>
+                                                    <a href="javascript:if(confirm('确定要拒绝该认证申请吗?'))location='/delete_newauthen/{{authen.id}}'" class="btn btn-danger btn-xs"><i class="fa fa-trash-o "></i></a>
                                                     <!--                  </td>-->
                                             </tr>
                                         </form>
@@ -404,6 +405,7 @@
                                                 <td class="center hidden-phone">{{auth.a_name}}</td>
                                                 <td class="center hidden-phone">
                                                     <a href="/check_schach_authen_details/{{auth.authen.id}}" class="btn btn-success btn-xs"><i class="fa fa-check"></i></a>
+                                                    <a href="javascript:if(confirm('确定要拒绝该认证申请吗?'))location='/delete_schach_authen/{{auth.authen.id}}'" class="btn btn-danger btn-xs"><i class="fa fa-trash-o "></i></a>
                                                     <!--                  </td>-->
                                             </tr>
                                         </form>

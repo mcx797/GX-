@@ -343,8 +343,8 @@
                   <td class="center hidden-phone">{{scholar.email}}</td>
                   <td class="center hidden-phone">{{scholar.p_title}}</td>
                       <td>
-                          <a href="/check_one_ach/{scholar.id}}" class="btn btn-success btn-xs"><i class="fa fa-check"></i></a>
-                          <a href="/edit_one_ach/{{scholar.id}}" class="btn btn-primary btn-xs"><i class="fa fa-pencil"></i></a>
+                          <a href="/check_one_scholar/{{scholar.user_id}}" class="btn btn-success btn-xs"><i class="fa fa-check"></i></a>
+                          <a href="/edit_one_scholar/{{scholar.user_id}}" class="btn btn-primary btn-xs"><i class="fa fa-pencil"></i></a>
                           <a href="javascript:if(confirm('确定要删除该学者吗?'))location='/delete_scholar/{{scholar.user_id}}'" class="btn btn-danger btn-xs"><i class="fa fa-trash-o "></i></a>
 <!--                    <input class="btn btn-success btn-xs" type ="submit" value="详情" name="{{ach.id}}">-->
                       </td>

@@ -17,8 +17,10 @@ urlpatterns = [
 
     url(r'^check_newach_authen/', views.check_newach_authen),
     url(r'^check_newauthen_details/(?P<id>\d+)$', views.check_one_newach_authen),
+    url(r'^delete_newauthen/(?P<id>\d+)$', views.delete_one_newauthen),
     # url(r'^check_sch_ach_authen/', views.check_sch_ach_authen),
     url(r'^check_schach_authen_details/(?P<id>\d+)$', views.check_one_sch_ach_authen),
+    url(r'^delete_schach_authen/(?P<id>\d+)$', views.delete_one_schach_authen),
 
     url(r'^checkdepartment/', views.check_department),
     url(r'^delete_one_dep/(?P<id>\d+)$', views.delete_one_dep),
@@ -33,8 +35,12 @@ urlpatterns = [
     # 用户相关
     url(r'^scholar/$', views.scholar),
     url(r'^delete_scholar/(?P<id>\d+)$', views.del_scholar),
+    url(r'^edit_one_scholar/(?P<id>\d+)$', views.edit_one_scholar),
+    url(r'^check_one_scholar/(?P<id>\d+)$', views.check_one_scholar),
     url(r'^student/$', views.student),
     url(r'^delete_student/(?P<id>\d+)$', views.del_student),
+    url(r'^edit_one_student/(?P<id>\d+)$', views.edit_one_student),
+    url(r'^check_one_student/(?P<id>\d+)$', views.check_one_student),
     url(r'^checkuser/$', views.check_all_user),
     url(r'^delete_user/(?P<id>\d+)$', views.delete_user),
 
@@ -55,4 +61,5 @@ urlpatterns = [
     url(r'^chengguoup', view.chengguoup),
     url(r'^getCollection',view.getCollection),
     url(r'^Identification', view.Identification),
+    url(r'TeacherIdentification', view.TeacherIdentification),
 ]
