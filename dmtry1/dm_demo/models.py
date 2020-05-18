@@ -19,10 +19,11 @@ class AchievementTab(models.Model):
     year = models.CharField(max_length=5)
     author_name = models.CharField(max_length=150)
     citation = models.IntegerField()    # 被引数
-    j_a_name = models.CharField(max_length=150)   #
+    j_a_name = models.CharField(max_length=150)   #成果所在期刊/会议
     file = models.CharField(max_length=150)
     link = models.CharField(max_length=150)
-
+    kind = models.CharField(max_length =10) #文献类型
+    num_view = models.IntegerField(default=0)#浏览次数
     get_id = models.IntegerField(default=0)
 
     keyword = models.CharField(max_length=200, default="NULL")
