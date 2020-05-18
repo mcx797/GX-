@@ -91,4 +91,5 @@ urlpatterns = [
     url(r'^getCollection', dview.getCollection),
     url(r'^Identification', dview.Identification),
     url(r'^TeacherIdentification', dview.TeacherIdentification),
+    url(r'^code2key', dview.code2key),
 ]

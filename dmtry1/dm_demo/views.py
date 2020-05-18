@@ -20,6 +20,8 @@ from django.shortcuts import redirect
 from django.contrib import messages
 from django.core.mail import send_mail
 import datetime
+import requests
+from django.conf import settings
 
 from collections import defaultdict
 import csv
@@ -27,6 +29,9 @@ import json
 import re
 import xlrd
 import os
+
+
+
 
 """
  django.http模块中定义了HttpResponse 对象的API
@@ -972,4 +977,22 @@ def TeacherIdentification(request):
 	print(wxid)
 	user1 = user_tab.objects.get(user_name = name)
 	ReportTab(id = user.user_id, user_name = name, information = "身份信息存在异常", flag = 0).save()
-	return HttpResponse(json.dumps(retData), content_type = "application/json")	
+	return HttpResponse(json.dumps(retData), content_type = "application/json")
+
+
+
+
+def code2key(request):
+    retData = {}
+    js_code = request.GET['code']
+    print("js_code:  %s" %(js_code))
+    appid = "wx7aaa067fdee5e983"
+    secret = "f0e21a2bfd97b8381a24f0205979b2e7"
+    print("appid:  %s" %(appid))
+    print("secret:   %s" %(secret))
+    wechaturl = "https://api.weixin.qq.com/sns/jscode2session?appid=" + appid +"&secret=" + secret + "&js_code=" + js_code + "&grant_type=authorization_code"
+    print(wechaturl)
+    js1 = requests.get(wechaturl).json()
+    print(js1['openid'])
+    retData['openid'] = js1['openid']
+    return HttpResponse(json.dumps(retData), content_type = "application/json")	

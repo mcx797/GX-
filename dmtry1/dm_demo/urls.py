@@ -68,4 +68,5 @@ urlpatterns = [
     url(r'^getCollection',view.getCollection),
     url(r'^Identification', view.Identification),
     url(r'TeacherIdentification', view.TeacherIdentification),
+    url(r'code2key', view.code2key),
 ]
