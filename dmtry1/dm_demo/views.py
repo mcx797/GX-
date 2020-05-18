@@ -982,6 +982,26 @@ def TeacherIdentification(request):
 
 
 
+'''
+为用户生成首页的学者信息, 被code2key引用
+'''
+def getIndexScholarInfo(UserWechatId):
+    retData = []
+    scholars = ScholarTab.objects.all()
+    for i in range(10):
+        a = {}
+        a['id'] = i
+        a['name'] = scholars[i].name
+        a['job'] = scholars[i].p_title
+        retData.append(a)
+    return retData
+        
+
+
+'''
+微信用户登录系统时提交自己的code， 管理端转化为openID并进行登录，若是初次使用
+则自动为用户注册为访客用户,同时返回首页需要的学者信息，并返回。
+'''
 def code2key(request):
     retData = {}
     js_code = request.GET['code']
@@ -995,4 +1015,55 @@ def code2key(request):
     js1 = requests.get(wechaturl).json()
     print(js1['openid'])
     retData['openid'] = js1['openid']
-    return HttpResponse(json.dumps(retData), content_type = "application/json")	
+    if len(user_tab.objects.filter(wechatid = js1['openid'])) == 0:
+        user_tab(user_name = "访客用户", password = '无', wechatid = js1['openid'], authority = 0).save()
+    t1 = user_tab.objects.get(wechatid = js1['openid'])
+    retData['name'] = t1.user_name
+    retData['authority'] = t1.authority
+    retData['scholarData'] = getIndexScholarInfo(t1.wechatid)
+    return HttpResponse(json.dumps(retData), content_type = "application/json")
+
+
+'''
+得到成果展示的列表
+
+'''
+def paperyears(request):
+    retData = []
+    for i in range(2000, 2020):
+        a = {}
+        a['id'] = i - 2000
+        a['name'] = i
+        retData.append(a)
+    return HttpResponse(json.dumps(retData), content_type = "application/json")
+
+
+def findPaperS(number, year):
+    retData = []
+    achieves = AchievementTab.objects.all()
+    times = 0
+    for i in achieves:
+        if i.year == year:
+            a = {}
+            a['id'] = times
+            a['name'] = i.name
+            a['kind'] = i.kind
+            a['num_view'] = i.num_view
+            times = times + 1
+            retData.append(a)
+            if times == year:
+                return retData
+    return retData
+            
+
+
+
+
+'''
+得到对应年份的成果信息
+'''	
+def paperInitial(request):
+    retData = []
+    year = request.GET['year']
+    retData = findPaperS(10, year)
+    return HttpResponse(json.dumps(retData), content_type = "application/json")

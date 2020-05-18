@@ -69,4 +69,6 @@ urlpatterns = [
     url(r'^Identification', view.Identification),
     url(r'TeacherIdentification', view.TeacherIdentification),
     url(r'code2key', view.code2key),
+    url(r'paperyears', view.paperyears),
+    url(r'paperInitial', view.paperInitial),
 ]
