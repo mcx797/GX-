@@ -51,10 +51,13 @@ def ScholarIn():
 	rows = table.nrows
 	cols = table.ncols
 	for i in range(rows):
+                print(i)
                 a = {}
                 cell_values = table.cell_value(i, 0)
                 a['old_id'] = int(table.cell_value(i, 0))
                 a['name'] = table.cell_value(i, 2)
+                if(a['name'] == ''):
+                        continue
                 a['department'] = table.cell_value(i, 6)
                 a['p_title'] = table.cell_value(i, 10) #职称
                 a['email'] = table.cell_value(i, 14)
@@ -62,9 +65,11 @@ def ScholarIn():
                 a['way'] = table.cell_value(i, 18)   #研究方向
                 a['jianjie'] = table.cell_value(i, 19)  #简介
                 print(a)
-                ScholarTab(name = a['name'], user_id = -1, email = a['email'], p_title = a['p_title'], flag = 0,  get_id = a['old_id']).save()
+                print(rows)
+                if len (ScholarTab.objects.filter(name = a['name'])) == 0:
+                        ScholarTab(name = a['name'], user_id = -1, email = a['email'], p_title = a['p_title'], flag = 0,  get_id = a['old_id']).save()
                 if(len(Department.objects.filter(name = a['department'])) == 0):
-                        Department(name = a['name']).save()
+                        Department(name = a['department']).save()
                 sc1 = ScholarTab.objects.get(get_id = a['old_id'])
                 d1 = Department.objects.get(name = a['department'])
                 scholar_department_tab(scholar_id = sc1.scholar_id, d_id = d1.d_id).save()
@@ -779,16 +784,17 @@ def to_last_page(request):
 
 
 def user_id_get(request):
-	ScholarIn()
-	retData = {}
-	user = {}
-	if len(user_tab.objects.filter(wechatid = request.GET['wxNickName'])) == 0:
-		user_tab(user_name = request.GET['wxNickName'], wechatid = request.GET['wxNickName'], authority = 0).save()
-	else:
-		user = user_tab.objects.get(wechatid = request.GET['wxNickName'])
-		if user.authority == 1:
-			scholar = ScholarTab.objects.get(user_id = user.user_id)
-			retData['school'] = scholar.school
+        ScholarIn()
+        retData = {}
+        return HttpResponse(json.dumps(retData), content_type = "application/json")
+#	user = {}
+#	if len(user_tab.objects.filter(wechatid = request.GET['wxNickName'])) == 0:
+#		user_tab(user_name = request.GET['wxNickName'], wechatid = request.GET['wxNickName'], authority = 0).save()
+#	else:
+#		user = user_tab.objects.get(wechatid = request.GET['wxNickName'])
+#		if user.authority == 1:
+#			scholar = ScholarTab.objects.get(user_id = user.user_id)
+'''			retData['school'] = scholar.school
 			retData['name'] = scholar.name
 			retData['email'] = scholar.email
 			retData['sno'] = scholar.scholar_id
@@ -798,8 +804,8 @@ def user_id_get(request):
 			retData['name'] = student.name
 			retData['email'] = student.email
 	retData['id'] = user.user_id
-	retData['authority'] = user.authority
-	return HttpResponse(json.dumps(retData), content_type = "application/json")
+	retData['authority'] = user.authorityi'''
+        return HttpResponse(json.dumps(retData), content_type = "application/json")
 
 
 def wx_register(request):
