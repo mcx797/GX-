@@ -95,4 +95,7 @@ urlpatterns = [
     url(r'^paperyears', dview.paperyears),
     url(r'paperInitial', dview.paperInitial),
     url(r'AchievementDetail', dview.AchievementDetail),
+    url(r'ScholarDepartment', dview.ScholarDepartment),
+    url(r'scholarGet', dview.scholarGet),
+    url(r'ScholarDetail', dview.ScholarDetail),
 ]

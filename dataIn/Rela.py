@@ -24,7 +24,27 @@ a = {}
 for i in range(rows):
     a['scholar_id'] = table.cell_value(i, 0)
     a['a_id'] = table.cell_value(i, 1)
-    print("%d  %d"%(a['scholar_id'], a['a_id']))
+    sql = "select a_id from achievement_tab where get_id = %d" % a['a_id']
+    cursor.execute(sql)
+    results = cursor.fetchall()
+    if len(results) == 0:
+        continue
+    a['a_id'] = results[0][0]
+    print(results[0][0])
+    sql = "select scholar_id from scholar_tab where get_id = %d" % a['scholar_id']
+    cursor.execute(sql)
+    results = cursor.fetchall()
+    if len(results) == 0:
+        continue
+    print(results[0][0])
+    a['scholar_id'] = results[0][0]
+    sql = "select * from scholar_achievement_tab where a_id = %d and scholar_id = %d" %(a['a_id'], a['scholar_id'])
+    cursor.execute(sql)
+    results = cursor.fetchall()
+    if len(results) != 0:
+        print("chongfu")
+        continue
+    print('----------------------------')
     sql = 'INSERT INTO scholar_achievement_tab(scholar_id, a_id)VALUES("%d", "%d")'%(a['scholar_id'], a['a_id'])
     cursor.execute(sql)
     db.commit()

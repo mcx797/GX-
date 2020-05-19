@@ -72,4 +72,7 @@ urlpatterns = [
     url(r'paperyears', view.paperyears),
     url(r'paperInitial', view.paperInitial),
     url(r'AchievementDetail', view.AchievementDetail),
+    url(r'ScholarDepartment', view.ScholarDepartment),
+    url(r'scholarGet', view.scholarGet),
+    url(r'ScholarDetail', view.ScholarDetail),
 ]

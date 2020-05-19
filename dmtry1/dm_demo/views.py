@@ -1083,13 +1083,63 @@ def paperInitial(request):
 def AchievementDetail(request):
     retData = {}
     a_id = request.GET['a_id']
-    print(a_id)
-    pritn("hahahahahaha")
     achieve = AchievementTab.objects.get(a_id = a_id)
     retData['name'] = achieve.name
     retData['type'] = achieve.kind
-    retData['author'] = achieve.author_name
-    #retData['year'] = achieve.year
+    retData['author'] =""
+    retData['year'] = achieve.year
     retData['link_text'] = achieve.link
     retData['keyword'] = achieve.keyword
+    sa1 = ScholarAchievementTab.objects.filter(a_id = a_id)
+    print(len(sa1))
+    if len(sa1) == 1:
+        s1 = ScholarTab.objects.get(scholar_id = sa1[0].scholar_id)
+        retData['author'] += s1.name
+    else:
+        for i in sa1:
+            s1 = ScholarTab.objects.get(scholar_id = i.scholar_id)
+            retData['author'] += ' '
+            retData['author'] += s1.name 
+    return HttpResponse(json.dumps(retData), content_type = "application/json")
+
+'''
+获取学者展示界面的学院信息
+'''
+
+def ScholarDepartment(request):
+    retData = []
+    depart = Department.objects.all()
+    for i in depart:
+        a = {}
+        a['id'] = i.d_id
+        a['name'] = i.name
+        retData.append(a)
+    return HttpResponse(json.dumps(retData), content_type = "application/json")
+'''
+根据学院id获取学院中所有的学者
+'''
+
+def scholarGet(request):
+    retData = []
+    d_id = request.GET['id']
+    sdt = scholar_department_tab.objects.filter(d_id = d_id)
+    for i in sdt:
+        a = {}
+        s1 = ScholarTab.objects.get(scholar_id = i.scholar_id)
+        a['name'] = s1.name
+        a['p_title'] = s1.p_title
+        a['email'] = s1.email
+        a['id'] = s1.scholar_id
+        retData.append(a)
+    return HttpResponse(json.dumps(retData), content_type = "application/json")
+
+'''
+根据学者id获取相应的学者
+'''         
+def ScholarDetail(request):
+    retData = []
+    s_id = request.GET['s_id']
+    print('____________________')
+    print(s_id)
+    print("____________________")
     return HttpResponse(json.dumps(retData), content_type = "application/json")
