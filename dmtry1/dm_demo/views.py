@@ -1025,7 +1025,7 @@ def code2key(request):
 
 
 '''
-得到成果展示的列表
+得到成果展示的列表,当前版本按年份整理，之后希望可以调整为关键词
 
 '''
 def paperyears(request):
@@ -1038,6 +1038,10 @@ def paperyears(request):
     return HttpResponse(json.dumps(retData), content_type = "application/json")
 
 
+
+'''
+给出对应年份的8组成果数据
+'''
 def findPaperS(number, year):
     retData = []
     achieves = AchievementTab.objects.all()
@@ -1049,6 +1053,7 @@ def findPaperS(number, year):
             a['name'] = i.name
             a['kind'] = i.kind
             a['num_view'] = i.num_view
+            a['a_id'] = i.a_id
             times = times + 1
             retData.append(a)
             if times == year:
@@ -1064,6 +1069,27 @@ def findPaperS(number, year):
 '''	
 def paperInitial(request):
     retData = []
-    year = request.GET['year']
+    year = request.GET['Thisyear']
+    print(year)
     retData = findPaperS(10, year)
+    return HttpResponse(json.dumps(retData), content_type = "application/json")
+
+
+
+
+'''
+根据paper的a_id得到具体的paper信息
+'''
+def AchievementDetail(request):
+    retData = {}
+    a_id = request.GET['a_id']
+    print(a_id)
+    pritn("hahahahahaha")
+    achieve = AchievementTab.objects.get(a_id = a_id)
+    retData['name'] = achieve.name
+    retData['type'] = achieve.kind
+    retData['author'] = achieve.author_name
+    #retData['year'] = achieve.year
+    retData['link_text'] = achieve.link
+    retData['keyword'] = achieve.keyword
     return HttpResponse(json.dumps(retData), content_type = "application/json")

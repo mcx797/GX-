@@ -71,4 +71,5 @@ urlpatterns = [
     url(r'code2key', view.code2key),
     url(r'paperyears', view.paperyears),
     url(r'paperInitial', view.paperInitial),
+    url(r'AchievementDetail', view.AchievementDetail),
 ]
