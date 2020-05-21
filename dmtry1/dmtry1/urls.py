@@ -98,4 +98,9 @@ urlpatterns = [
     url(r'ScholarDepartment', dview.ScholarDepartment),
     url(r'scholarGet', dview.scholarGet),
     url(r'ScholarDetail', dview.ScholarDetail),
+    url(r'StudentCerti', dview.StudentCerti),
+    url(r'faveAchievement', dview.faveAchievement),
+    url(r'faveScholar', dview.faveScholar),
+    url(r'getUserInfo', dview.getUserInfo),
+    url(r'StudentCerti', dview.StudentCerti)
 ]

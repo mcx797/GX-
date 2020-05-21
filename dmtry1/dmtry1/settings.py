@@ -80,7 +80,7 @@ DATABASES = {
         # 'ENGINE': 'django.db.backends.sqlite3',
         # 'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
         "ENGINE": "django.db.backends.mysql",
-        "NAME": "dmtrydb",  # 需要自己手动创建数据库
+        "NAME": "dmtry",  # 需要自己手动创建数据库
         "USER": "root",
         "PASSWORD": "zsjnb",
         "HOST": "127.0.0.1",

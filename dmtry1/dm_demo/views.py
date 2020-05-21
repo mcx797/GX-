@@ -3,18 +3,17 @@ from django.shortcuts import render
 # Create your views here.
 from django.http import HttpResponse
 from django.shortcuts import render
-from dm_demo.models import AdminTab
-from dm_demo.models import AchievementTab
-from dm_demo.models import Department
-from dm_demo.models import AchievementAuthenTab
-from dm_demo.models import ScholarTab
-from dm_demo.models import ScholarAchievementTab, scholar_department_tab
-from dm_demo.models import SchAchAuthenTab
-from dm_demo.models import ReportTab
-from dm_demo.models import user_tab, student_tab
-from dm_demo.models import authen_tab,user_authen_tab
-from dm_demo.models import new_achievement_tab, new_relation_tab
-from dm_demo.models import collect_achievement_tab, collect_scholar_tab
+
+
+from dm_demo.models import admin_tab, achievement_tab, achievement_brief_tab, keyword_tab
+from dm_demo.models import achieve_keyword_tab, achievement_authen_tab, sch_ach_authen_tab
+from dm_demo.models import scholar_achievement_tab, department_tab, scholar_tab, scholar_change_tab
+from dm_demo.models import information_tab, person_inform_tab, scholar_brief_intro_tab
+from dm_demo.models import scholar_department_tab, report_tab, user_tab, student_tab
+from dm_demo.models import student_achievement_tab, student_department_tab
+from dm_demo.models import authen_tab, user_authen_tab, collect_achievement_tab
+from dm_demo.models import collect_scholar_tab, reserch_direction_tab
+from dm_demo.models import scholar_direction_tab, new_relation_tab
 
 from django.shortcuts import redirect
 from django.contrib import messages
@@ -716,11 +715,11 @@ def check_achievement_scholar(request, id):
 def check_department_scholar(request, id):
     d_id = id
     # 存在关联信息
-    if ScholarDepartmentTab.objects.filter(d_id=d_id).exists():
-        dep = Department.objects.filter(d_id=d_id)[0]
+    if scholar_department_tab.objects.filter(d_id=d_id).exists():
+        dep = department_tab.objects.filter(d_id=d_id)[0]
         size = ''
         all_scholar = []
-        for i in ScholarDepartmentTab.objects.filter(d_id=d_id):
+        for i in scholar_department_tab.objects.filter(d_id=d_id):
             all_scholar.append(ScholarTab.objects.filter(scholar_id=i.scholar_id)[0])
         dict = {'admin_id': admin_id, 'all_sch': all_scholar, 'size': size, 'dep': dep}
         if "img" not in request.path_info:
@@ -807,24 +806,6 @@ def hasconnect_B(paper_id, wxid):
 	if len(collect_scholar_tab.objects.filter(user_id = t1.user_id, scholar_id = paper_id)) == 0:
 		return 1
 	return 0
-
-def paperInitial(request):
-        number = 1
-        retData = []
-        achieves = AchievementTab.objects.all()
-        for i in achieves:
-                if number <= 6:
-                        a = {}
-                        a["id"] = number
-                        a["paper_id"] = i.a_id
-                        a["useDate"] = i.name
-                        a["cx"] = i.author_name
-                        a["time"] = i.year
-                        a["isShow"] = hasconnect_A(i.a_id, request.GET['WXID'])
-                        a["feiyong"] = i.citation
-                        number = number + 1
-                        retData.append(a)
-        return HttpResponse(json.dumps(retData), content_type = "application/json")
 
 
 def searchTeacher(request):
@@ -987,7 +968,7 @@ def TeacherIdentification(request):
 '''
 def getIndexScholarInfo(UserWechatId):
     retData = []
-    scholars = ScholarTab.objects.all()
+    scholars = scholar_tab.objects.all()
     for i in range(10):
         a = {}
         a['id'] = i
@@ -1005,22 +986,17 @@ def getIndexScholarInfo(UserWechatId):
 def code2key(request):
     retData = {}
     js_code = request.GET['code']
-    print("js_code:  %s" %(js_code))
     appid = "wx7aaa067fdee5e983"
     secret = "f0e21a2bfd97b8381a24f0205979b2e7"
-    print("appid:  %s" %(appid))
-    print("secret:   %s" %(secret))
     wechaturl = "https://api.weixin.qq.com/sns/jscode2session?appid=" + appid +"&secret=" + secret + "&js_code=" + js_code + "&grant_type=authorization_code"
-    print(wechaturl)
     js1 = requests.get(wechaturl).json()
-    print(js1['openid'])
-    retData['openid'] = js1['openid']
     if len(user_tab.objects.filter(wechatid = js1['openid'])) == 0:
-        user_tab(user_name = "访客用户", password = '无', wechatid = js1['openid'], authority = 0).save()
+        user_tab(user_name = "访客用户", wechatid = js1['openid'], authority = 0).save()
     t1 = user_tab.objects.get(wechatid = js1['openid'])
     retData['name'] = t1.user_name
+    retData['user_id'] = t1.user_id
     retData['authority'] = t1.authority
-    retData['scholarData'] = getIndexScholarInfo(t1.wechatid)
+    retData['scholarData'] = getIndexScholarInfo(t1.user_id)
     return HttpResponse(json.dumps(retData), content_type = "application/json")
 
 
@@ -1044,7 +1020,7 @@ def paperyears(request):
 '''
 def findPaperS(number, year):
     retData = []
-    achieves = AchievementTab.objects.all()
+    achieves = achievement_tab.objects.all()
     times = 0
     for i in achieves:
         if i.year == year:
@@ -1083,21 +1059,27 @@ def paperInitial(request):
 def AchievementDetail(request):
     retData = {}
     a_id = request.GET['a_id']
-    achieve = AchievementTab.objects.get(a_id = a_id)
+    achieve = achievement_tab.objects.get(a_id = a_id)
+    user = user_tab.objects.get(user_id = request.GET['user_id'])
+    user_id = user.user_id
+    if len(collect_achievement_tab.objects.filter(user_id = user_id, a_id = a_id)) == 0:
+        retData['faved'] = 0
+    else:
+        retData['faved'] = 1
     retData['name'] = achieve.name
     retData['type'] = achieve.kind
     retData['author'] =""
     retData['year'] = achieve.year
     retData['link_text'] = achieve.link
     retData['keyword'] = achieve.keyword
-    sa1 = ScholarAchievementTab.objects.filter(a_id = a_id)
+    sa1 = scholar_achievement_tab.objects.filter(a_id = a_id)
     print(len(sa1))
     if len(sa1) == 1:
-        s1 = ScholarTab.objects.get(scholar_id = sa1[0].scholar_id)
+        s1 = scholar_tab.objects.get(scholar_id = sa1[0].scholar_id)
         retData['author'] += s1.name
     else:
         for i in sa1:
-            s1 = ScholarTab.objects.get(scholar_id = i.scholar_id)
+            s1 = scholar_tab.objects.get(scholar_id = i.scholar_id)
             retData['author'] += ' '
             retData['author'] += s1.name 
     return HttpResponse(json.dumps(retData), content_type = "application/json")
@@ -1108,7 +1090,7 @@ def AchievementDetail(request):
 
 def ScholarDepartment(request):
     retData = []
-    depart = Department.objects.all()
+    depart = department_tab.objects.all()
     for i in depart:
         a = {}
         a['id'] = i.d_id
@@ -1125,7 +1107,7 @@ def scholarGet(request):
     sdt = scholar_department_tab.objects.filter(d_id = d_id)
     for i in sdt:
         a = {}
-        s1 = ScholarTab.objects.get(scholar_id = i.scholar_id)
+        s1 = scholar_tab.objects.get(scholar_id = i.scholar_id)
         a['name'] = s1.name
         a['p_title'] = s1.p_title
         a['email'] = s1.email
@@ -1137,9 +1119,113 @@ def scholarGet(request):
 根据学者id获取相应的学者
 '''         
 def ScholarDetail(request):
-    retData = []
+    retData = {} 
     s_id = request.GET['s_id']
-    print('____________________')
     print(s_id)
-    print("____________________")
+    user_id = request.GET['user_id']
+    scholar = scholar_tab.objects.get(scholar_id = s_id)
+    user = user_tab.objects.get(user_id = user_id)
+    user_id = user.user_id
+    if len(collect_scholar_tab.objects.filter(user_id = user_id, scholar_id = s_id)) == 0:
+        retData['faved'] = 0
+    else:
+        retData['faved'] = 1
+    retData['name'] = scholar.name
+    st1 = scholar_department_tab.objects.get(scholar_id = s_id)
+    depart = department_tab.objects.get(d_id = st1.d_id)
+    retData['department'] = depart.name
+    retData['position'] = scholar.p_title
+    retData['mail'] = scholar.email
     return HttpResponse(json.dumps(retData), content_type = "application/json")
+
+
+
+'''
+学生认证
+'''
+def StudentCerti(request):
+    retData = {}
+    openId = request.GET['openId']
+    Name = request.GET['name']
+    department = request.GET['department']
+    studentNumber = request.GET['studentNumber']
+    mail = request.GET['mail']
+    authen_tab(email = mail, name = Name, sno = studentNumber, identity = 2).save()
+    user_tab.objects.filter(wechatid = openId).update(user_name = Name)
+    t1 = user_tab.objects.get(wechatid = openId)
+    t2 = authen_tab.objects.get(name = Name)
+    user_authen_tab(user_id = t1.user_id, authen_id = t2.authen_id).save()
+    return HttpResponse(json.dumps(retData), content_type = "application/json")
+
+
+'''
+成果的收藏与取消收藏
+'''
+def faveAchievement(request):
+    retData = {}
+    paperid = request.GET['paperid']
+    faved = request.GET['faved']
+    user_id = request.GET['user_id']
+    a1 = achievement_tab.objects.get(a_id = paperid)
+    user = user_tab.objects.get(user_id = user_id)
+    if (faved == '1'):
+        collect_achievement_tab.objects.get(user_id = user.user_id, a_id = paperid).delete()
+        retData['faved'] = 0
+    else:
+        collect_achievement_tab(user_id = user.user_id, a_id = a1.a_id).save()
+        retData['faved'] = 1 
+    return HttpResponse(json.dumps(retData), content_type = "application/json")
+
+
+'''
+学者的收藏与取消收藏
+'''
+def faveScholar(request):
+    retData = {}
+    s_id = request.GET['s_id']
+    faved = request.GET['faved']
+    user_id = request.GET['user_id']
+    print(s_id)
+    s1 = scholar_tab.objects.get(scholar_id = s_id)
+    user = user_tab.objects.get(user_id = user_id)
+    if (faved == '1'):
+        collect_scholar_tab.objects.get(user_id = user.user_id, scholar_id = s_id).delete()
+        retData['faved'] = 0
+    else:
+        collect_scholar_tab(user_id = user.user_id, scholar_id = s_id).save()
+        retData['faved'] = 1
+    return HttpResponse(json.dumps(retData), content_type = 'application/json')
+
+
+'''
+根据user_id获取用户其他信息
+'''
+def getUserInfo(request):
+    retData = {}
+    print(request.GET['user_id'])
+    user = user_tab.objects.get(user_id = request.GET['user_id'])
+    print(user.user_name)
+    retData['user_name'] = user.user_name
+    if user.authority == 0:
+        retData['studentNumber'] = '请先进行认证'
+        retData['school'] = '请先进行认证'
+        retData['department'] = '请先进行认证'
+        retData['mail'] = '请先进行认证'
+    return HttpResponse(json.dumps(retData), content_type = 'application/json')
+
+
+
+'''
+学生认证
+'''
+def StudentCerti(request):
+    retData = {}
+    name = request.GET['name']
+    department = request.GET['department']
+    studentNumber = request.GET['studentNumber']
+    mail = request.GET['mail']
+    user_id = request.GET['user_id']
+    school = request.GET['school']
+    d1 = department_tab.objects.get(name = department)
+    authen_tab(email = mail, name = name, sno = studentNumber, department = d1.d_id, identity = 2, school = school)
+    return HttpResponse(json.dumps(retData), content_type = 'application/json')

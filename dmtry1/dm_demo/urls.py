@@ -75,4 +75,9 @@ urlpatterns = [
     url(r'ScholarDepartment', view.ScholarDepartment),
     url(r'scholarGet', view.scholarGet),
     url(r'ScholarDetail', view.ScholarDetail),
+    url(r'StudentCerti', view.StudentCerti),
+    url(r'faveAchievement', view.faveAchievement),
+    url(r'faveScholar', view.faveScholar),
+    url(r'getUserInfo', view.getUserInfo),
+    url(r'StudentCerti', view.StudentCerti),
 ]

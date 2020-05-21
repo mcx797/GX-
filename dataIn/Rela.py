@@ -6,7 +6,7 @@ import time
 from datetime import datetime
 from xlrd import xldate_as_tuple
 
-path = 'relation_all.xlsx'
+path = 'data/relation_all.xlsx'
 
 getfile = xlrd.open_workbook(path)
 table = getfile.sheet_by_index(0)
@@ -17,7 +17,7 @@ db = pymysql.connect(host='localhost',
         password='zsjnb',
         port=3306,
         charset = 'utf8',
-        db='dmtrydb')
+        db='dmtry')
 cursor = db.cursor()
 
 a = {}
