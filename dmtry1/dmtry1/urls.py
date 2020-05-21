@@ -100,4 +100,5 @@ urlpatterns = [
     url(r'ScholarSearch', dview.ScholarSearch),
     url(r'WxReport', dview.WxReport),
     url(r'GetDepartment', dview.GetDepartment),
+    url(r'getAllDepartment', dview.getAllDepartment),
 ]

@@ -1157,3 +1157,24 @@ def WxReport(request):
     return HttpResponse(json.dumps(retData), content_type = 'application/json')
     
         
+def GetDepartment(models.Model):
+    retData = []
+    search = request.GET['search']
+    d1 = department_tab.objects.all()
+    for i in d1:
+        if search in i.name:
+            a = {}
+            a['name'] = i.name
+            a['d_id'] = i.d_id
+            retData.append(a)
+    if len(retData != 0):
+        return HttpResponse(json.dumps(retData), content_type = 'application/json')
+    
+    for i in d1:
+        a = {}
+        a['name'] = i.name
+        a['d_id'] = i.d_id
+        retData.append(a)
+    return HttpResponse(json.dumps(retData), content_type = 'application/json')
+
+
