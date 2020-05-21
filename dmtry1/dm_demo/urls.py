@@ -57,17 +57,6 @@ urlpatterns = [
 
 
     #小程序用户
-    url(r'^user_id_get', views.user_id_get),
-    url(r'^wx_login', views.wx_register),
-    url(r'^searchPaper', views.searchPaper),
-    url(r'^collectPaper', views.collectPaper),
-    url(r'^paperInitial', views.paperInitial),
-    url(r'^searchTeacher', views.searchTeacher),
-    url(r'^teacherInitial', view.teacherInitial),
-    url(r'^chengguoup', view.chengguoup),
-    url(r'^getCollection',view.getCollection),
-    url(r'^Identification', view.Identification),
-    url(r'TeacherIdentification', view.TeacherIdentification),
     url(r'code2key', view.code2key),
     url(r'paperyears', view.paperyears),
     url(r'paperInitial', view.paperInitial),
@@ -83,4 +72,9 @@ urlpatterns = [
     url(r'show_log', view.show_log, name = "image"),
     url(r'getFavScholar', view.getFavScholar),
     url(r'getFavAchievement', view.getFavAchievement),
+    url(r'ScholarCerti', view.ScholarCerti),
+    url(r'AchievementSearch', view.AchievementSearch),
+    url(r'ScholarSearch', view.ScholarSearch),
+    url(r'WxReport', view.WxReport),
+    url(r'GetDepartment', view.GetDepartment),
 ]

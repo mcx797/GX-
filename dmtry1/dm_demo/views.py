@@ -741,227 +741,6 @@ def to_last_page(request):
 
 
 
-
-
-def user_id_get(request):
-    ScholarIn()
-    retData = {}
-    return HttpResponse(json.dumps(retData), content_type = "application/json")
-
-'''
-#	user = {}
-#	if len(user_tab.objects.filter(wechatid = request.GET['wxNickName'])) == 0:
-#		user_tab(user_name = request.GET['wxNickName'], wechatid = request.GET['wxNickName'], authority = 0).save()
-#	else:
-#		user = user_tab.objects.get(wechatid = request.GET['wxNickName'])
-#		if user.authority == 1:
-#			scholar = ScholarTab.objects.get(user_id = user.user_id)
-			retData['school'] = scholar.school
-			retData['name'] = scholar.name
-			retData['email'] = scholar.email
-			retData['sno'] = scholar.scholar_id
-		if user.authority == 2:
-			student = student_tab.objects.get(user_id = user.user_id)
-			retData['school'] = student.school
-			retData['name'] = student.name
-			retData['email'] = student.email
-	retData['id'] = user.user_id
-	retData['authority'] = user.authorityi'''
-#        return HttpResponse(json.dumps(retData), content_type = "application/json")
-
-
-def wx_register(request):
-	autho = 0
-	if (request.GET['authority'] == "学生用户"):
-		autho = 2
-	if (request.GET['authority'] == "学者用户"):
-		autho = 1
-	if (autho == 1 or autho == 2):
-		print(request.GET['mail'])
-		authen_tab(email = request.GET['mail'], name = request.GET['name'], sno = request.GET['schoolid'], identity = autho).save()
-		user_tab.objects.filter(wechatid = request.GET['wechatid']).update(user_name = request.GET['name'])
-		retData = {}
-		retData['b'] = 'b'
-		t1 = user_tab.objects.get(wechatid = request.GET['wechatid'])
-		t2 = authen_tab.objects.get(name = request.GET['name'])
-		print(t1.user_id)
-		user_authen_tab(user_id = t1.user_id, authen_id = t2.authen_id).save()
-		return HttpResponse(json.dumps(retData), content_type = "application/json")
-	retData = {}
-	retData['a'] = 'a'
-	return HttpResponse(json.dumps(retData), content_type = "application/json")
-
-
-def hasconnect_A(paper_id, wxid):
-	t1 = user_tab.objects.get(wechatid = wxid)
-	if len(collect_achievement_tab.objects.filter(user_id = t1.user_id, a_id = paper_id)) == 0:
-		return 1
-	return 0
-
-
-
-def hasconnect_B(paper_id, wxid):
-	t1 = user_tab.objects.get(wechatid = wxid)
-	if len(collect_scholar_tab.objects.filter(user_id = t1.user_id, scholar_id = paper_id)) == 0:
-		return 1
-	return 0
-
-
-def searchTeacher(request):
-	text = request.GET['text']
-	number = 1
-	retData = []
-	scholars = ScholarTab.objects.all()
-	for i in scholars:
-		if text in i.name:
-			a = {}
-			a["id"] = number
-			a["usseData"] = i.name
-			a["cx"] = i.school
-			a["time"] = i.email
-			#a["isShow"] = hasconnect_B(i.scholar_id, request.GET['WXID'])
-			number = number + 1
-			retData.append(a)
-	return HttpResponse(json.dumps(retData), content_type = "application/json") 
-
-
-
-
-def searchPaper(request):
-	text = request.GET['text']
-	number = 1
-	retData = []
-	achieves = AchievementTab.objects.all()
-	for i in achieves:
-		if text in i.name:
-			a = {}
-			a["id"] = number
-			a["paper_id"] = i.a_id
-			a["useDate"] = i.name
-			a["cx"] = i.author_name
-			a["time"] = i.year
-			a["isShow"] = hasconnect_A(i.a_id, request.GET['WXID'])
-			a["feiyong"] = i.citation
-			number = number + 1
-			retData.append(a)
-	return HttpResponse(json.dumps(retData), content_type = "application/json")
-
-
-def teacherInitial(request):
-        number = 1
-        retData = []
-        scholars = ScholarTab.objects.all()
-        for i in scholars:
-                if number <= 6:
-                        a = {}
-                        a["id"] = number
-                        a["usseData"] = i.name
-                        a["cx"] = i.school
-                        a["time"] = i.email
-			#a['isShow'] = hasconnect_B(i.scholar_id, request.GET['WXID'])
-                        number = number + 1
-                        retData.append(a)
-        return HttpResponse(json.dumps(retData), content_type = "application/json")
-
-
-'''
-def collectScholar(request):
-	retData = {}
-	ScholarName = request.GET['scholarName']
-	isCollect = request.GET['isCollect']
-	WXID = request.GET['WXID']
-	print(ScholarName)
-	print(isCollect)
-	print(WXID)
-	t1 = user_tab.objects.get(wechatid = WXID)
-	t2 = scholarTab.objects.get(name = ScholarName)
-		if (isCollect == '1'):
-			print("hahaha")
-			collect_scholar_tab(user_id = t1.user_id, scholar_id = t2.scholar_id).save()
-		else:
-			print("xixixi")
-			collect_scholar_tab(user_id = t1.user_id, scholar_id = t2.scholar_id).delete()
-	return HttpResponse(json.dumps(retData), content_type = "application/json")
-
-'''
-
-def collectPaper(request):
-	retData = {}
-	paperId = request.GET['paperId']
-	isCollect = request.GET['isCollect']
-	WXID = request.GET['WXID']
-	print(paperId)
-	print(isCollect)
-	print(WXID)
-	t1 = user_tab.objects.get(wechatid = WXID)
-	if (isCollect == '1'):
-		print("hahaha")
-		collect_achievement_tab(user_id = t1.user_id, a_id = paperId).save()
-	else:
-		print("xixixi")
-		collect_achievement_tab.objects.filter(user_id = t1.user_id, a_id = paperId).delete()
-	return HttpResponse(json.dumps(retData), content_type = "application/json")
-
-def chengguoup(request):
-	retData = {}
-	print("kkkkk")
-	t1 = user_tab.objects.get(wechatid = request.GET['WXID'])
-	scholar = ScholarTab.objects.get(user_id = t1.user_id)
-	AchievementAuthenTab(a_name = request.GET['name'], scholar_id = scholar.scholar_id, citation = request.GET['citation'], year = request.GET['year']).save()
-	print("hahaha")
-	retData['a'] = 'a'
-	return HttpResponse(json.dumps(retData), content_type = "application/json")
-
-
-def getCollection(request):
-	retData = []
-	number = 1
-	wxid = request.GET['WXID']
-	collection = collect_achievement_tab.objects.all()
-	user =  user_tab.objects.get(wechatid = wxid)
-	for i in collection:
-		if (user.user_id == i.user_id):
-			k = AchievementTab.objects.get(a_id = i.a_id)
-			a = {}
-			a["id"] = number
-			a["paper_id"] = k.a_id
-			a["useDate"] = k.name
-			a["cx"] = k.author_name
-			a["time"] = k.year
-			a["feiyong"] = k.citation
-			number = number + 1
-			retData.append(a)
-	return HttpResponse(json.dumps(retData), content_type = "application/json")	
-	
-
-def Identification(request):
-	retData = {}
-	brief = request.GET['brief']
-	wxid = request.GET['WXID']
-	user = user_tab.objects.get(wechatid = wxid)
-	#Achie = AchievementTab.objects.get(name = brief)
-	#if len (Achie > 1) :
-	#	Achie = Achie[0]
-	ReportTab(id = user.user_id, user_name = wxid, information = brief + "论文信息存在异常", flag = 0).save()
-	return HttpResponse(json.dumps(retData), content_type = "application/json")
-
-
-def TeacherIdentification(request):
-	retData = {}
-	name = request.GET['brief']
-	wxid = request.GET['WXID']
-	print(name)
-	print(name)
-	print(name)
-	user = user_tab.objects.get(wechatid = wxid)
-	print(wxid)
-	user1 = user_tab.objects.get(user_name = name)
-	ReportTab(id = user.user_id, user_name = name, information = "身份信息存在异常", flag = 0).save()
-	return HttpResponse(json.dumps(retData), content_type = "application/json")
-
-
-
-
 '''
 为用户生成首页的学者信息, 被code2key引用
 '''
@@ -972,6 +751,7 @@ def getIndexScholarInfo(UserWechatId):
         a = {}
         a['id'] = i
         a['get_id'] = scholars[i].get_id
+        a['scholar_id'] = scholars[i].scholar_id
         a['name'] = scholars[i].name
         a['job'] = scholars[i].p_title
         retData.append(a)
@@ -1236,6 +1016,23 @@ def StudentCerti(request):
     authen_tab(email = mail, name = name, sno = studentNumber, department = d1.d_id, identity = 2, school = school)
     return HttpResponse(json.dumps(retData), content_type = 'application/json')
 
+'''
+学者认证
+'''
+def ScholarCerti(request):
+    retData = {}
+    name = request.GET['name']
+    department = request.GET['department']
+    studentNumber = request.GET['studentNumber']
+    mail = request.GET['mail']
+    user_id = request.GET['user_id']
+    school = request.GET['school']
+    d1 = department_tab.objects.get(name = department)
+    authen_tab(email = mail, name = name, sno = studentNumber, department = d1.d_id, identity = 1, school = school)
+    return HttpResponse(json.dumps(retData), content_type = 'application/json')
+    
+
+
 
 
 
@@ -1293,3 +1090,70 @@ def getFavAchievement(request):
         a['a_id'] = achieve.a_id
         retData.append(a)
     return HttpResponse(json.dumps(retData), content_type = 'application/json')
+    
+    
+
+'''
+成果搜索
+'''
+def AchievementSearch(request):
+    retData = []
+    search = request.GET['search']
+    a1 = achievement_tab.objects.order_by('num_view').reverse()
+    for i in a1:
+        if search in i.name:
+            a = {}
+            a['name'] = i.name
+            a['author'] = i.author_name
+            a['year'] = i.year
+            a['a_id'] = i.a_id
+            retData.append(a)
+    return HttpResponse(json.dumps(retData), content_type = 'application/json')
+    
+
+
+
+'''
+学者搜索
+'''
+def ScholarSearch(request):
+    retData = []
+    search = request.GET['search']
+    scholars = scholar_tab.objects.all()
+    for i in scholars:
+        if search in i.name:
+            a = {}
+            a['name'] = i.name
+            a['p_title'] = i.p_title
+            sd1 = scholar_department_tab.objects.filter(scholar_id = i.scholar_id)
+            if len(sd1) > 0:
+                sd1 = sd1[0]
+                d1 = department_tab.objects.get(d_id = sd1.d_id)
+                a['department'] = d1.name
+            else:
+                a['department'] = '暂无'
+            a['scholar_id'] = i.scholar_id
+            a['get_id'] = i.get_id
+            retData.append(a)
+    return HttpResponse(json.dumps(retData), content_type = 'application/json')
+    
+        
+        
+'''
+用户举报
+''' 
+def WxReport(request):
+    retData = {}
+    user_id = request.GET['user_id']
+    typein = request.GET['type']
+    id_in = request.GET['id']
+    title = request.GET['title']
+    brief = request.GET['brief']
+    if typein == "1":
+        report_tab(typeR = 0, id = user_id, a_id = id_in, information = brief)
+    else:
+        report_tab(typeR = 1, id = user_id, a_id = id_in, information = brief)
+    retData['code'] = 0
+    return HttpResponse(json.dumps(retData), content_type = 'application/json')
+    
+        
