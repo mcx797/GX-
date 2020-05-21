@@ -77,5 +77,4 @@ urlpatterns = [
     url(r'ScholarSearch', view.ScholarSearch),
     url(r'WxReport', view.WxReport),
     url(r'GetDepartment', view.GetDepartment),
-    url(r'getAllDepartment', view.getAllDepartment),
 ]

@@ -1012,8 +1012,7 @@ def StudentCerti(request):
     mail = request.GET['mail']
     user_id = request.GET['user_id']
     school = request.GET['school']
-    d1 = department_tab.objects.get(name = department)
-    authen_tab(email = mail, name = name, sno = studentNumber, department = d1.d_id, identity = 2, school = school)
+    authen_tab(email = mail, name = name, sno = studentNumber, department = department, identity = 2, school = school)
     return HttpResponse(json.dumps(retData), content_type = 'application/json')
 
 '''
@@ -1156,8 +1155,11 @@ def WxReport(request):
     retData['code'] = 0
     return HttpResponse(json.dumps(retData), content_type = 'application/json')
     
-        
-def GetDepartment(models.Model):
+      
+'''
+根据检索的信息提供学院数据
+'''  
+def GetDepartment(request):
     retData = []
     search = request.GET['search']
     d1 = department_tab.objects.all()
@@ -1167,7 +1169,7 @@ def GetDepartment(models.Model):
             a['name'] = i.name
             a['d_id'] = i.d_id
             retData.append(a)
-    if len(retData != 0):
+    if len(retData) != 0:
         return HttpResponse(json.dumps(retData), content_type = 'application/json')
     
     for i in d1:
