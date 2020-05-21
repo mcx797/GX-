@@ -80,4 +80,7 @@ urlpatterns = [
     url(r'faveScholar', view.faveScholar),
     url(r'getUserInfo', view.getUserInfo),
     url(r'StudentCerti', view.StudentCerti),
+    url(r'show_log', view.show_log, name = "image"),
+    url(r'getFavScholar', view.getFavScholar),
+    url(r'getFavAchievement', view.getFavAchievement),
 ]

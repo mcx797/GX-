@@ -102,5 +102,8 @@ urlpatterns = [
     url(r'faveAchievement', dview.faveAchievement),
     url(r'faveScholar', dview.faveScholar),
     url(r'getUserInfo', dview.getUserInfo),
-    url(r'StudentCerti', dview.StudentCerti)
+    url(r'StudentCerti', dview.StudentCerti),
+    url(r'show_log', dview.show_log, name = "image"),
+    url(r'getFavScholar', dview.getFavScholar),
+    url(r'getFavAchievement', dview.getFavAchievement),
 ]

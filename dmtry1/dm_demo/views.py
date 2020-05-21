@@ -31,7 +31,6 @@ import os
 
 
 
-
 """
  django.http模块中定义了HttpResponse 对象的API
  作用：不需要调用模板直接返回数据
@@ -972,6 +971,7 @@ def getIndexScholarInfo(UserWechatId):
     for i in range(10):
         a = {}
         a['id'] = i
+        a['get_id'] = scholars[i].get_id
         a['name'] = scholars[i].name
         a['job'] = scholars[i].p_title
         retData.append(a)
@@ -1095,6 +1095,7 @@ def ScholarDepartment(request):
         a = {}
         a['id'] = i.d_id
         a['name'] = i.name
+        a['level'] = 1
         retData.append(a)
     return HttpResponse(json.dumps(retData), content_type = "application/json")
 '''
@@ -1103,6 +1104,7 @@ def ScholarDepartment(request):
 
 def scholarGet(request):
     retData = []
+    num = 0
     d_id = request.GET['id']
     sdt = scholar_department_tab.objects.filter(d_id = d_id)
     for i in sdt:
@@ -1110,9 +1112,13 @@ def scholarGet(request):
         s1 = scholar_tab.objects.get(scholar_id = i.scholar_id)
         a['name'] = s1.name
         a['p_title'] = s1.p_title
+        a['get_id'] = s1.get_id
         a['email'] = s1.email
         a['id'] = s1.scholar_id
         retData.append(a)
+        num += 1
+        if (num == 10):
+            break
     return HttpResponse(json.dumps(retData), content_type = "application/json")
 
 '''
@@ -1228,4 +1234,62 @@ def StudentCerti(request):
     school = request.GET['school']
     d1 = department_tab.objects.get(name = department)
     authen_tab(email = mail, name = name, sno = studentNumber, department = d1.d_id, identity = 2, school = school)
+    return HttpResponse(json.dumps(retData), content_type = 'application/json')
+
+
+
+
+'''
+展示图片
+'''
+def show_log(request):
+    get_id = request.GET['get_id']
+    path = '../image/' + get_id + '.jpg'
+    module_dir = os.path.dirname(__file__)
+    path = os.path.join(module_dir, path)
+    print(path)
+    file_one = open(path, "rb")
+    return HttpResponse(file_one.read(), content_type = 'image/jpg')
+
+
+
+'''
+返回用户收藏的学者
+'''
+def getFavScholar(request):
+    retData = []
+    user_id = request.GET['user_id']
+    collects = collect_scholar_tab.objects.filter(user_id = user_id)
+    i = 0
+    for collect in collects:
+        a = {}
+        scholar_id = collect.scholar_id
+        scholar = scholar_tab.objects.get(scholar_id = scholar_id)
+        a['name'] = scholar.name
+        a['position'] = scholar.p_title
+        a['get_id'] = scholar.get_id
+        a['scholar_id'] = scholar_id
+        d_id = scholar_department_tab.objects.get(scholar_id = scholar_id).d_id
+        a['department'] = department_tab.objects.get(d_id = d_id).name
+        retData.append(a)
+    return HttpResponse(json.dumps(retData), content_type = 'application/json')
+       
+
+'''
+返还用户收藏的成果
+'''
+def getFavAchievement(request):
+    retData = []
+    user_id = request.GET['user_id']
+    collects = collect_achievement_tab.objects.filter(user_id = user_id)
+    i = 0
+    for collect in collects:
+        a = {}
+        a_id = collect.a_id
+        achieve = achievement_tab.objects.get(a_id = a_id)
+        a['name'] = achieve.name
+        a['author'] = achieve.author_name
+        a['year'] = achieve.year
+        a['a_id'] = achieve.a_id
+        retData.append(a)
     return HttpResponse(json.dumps(retData), content_type = 'application/json')
