@@ -48,13 +48,14 @@ urlpatterns = [
 
     url(r'^checkreport/', dview.check_report),
     url(r'^delete_one_report/(?P<id>\d+)$', dview.delete_one_report),
-    url(r'^check_one_report/(?P<id>\d+)$', dview.check_one_report),
+    # url(r'^check_one_report/(?P<id>\d+)$', dview.check_one_report),
 
     # 用户相关
     url(r'^scholar/$', dview.scholar),
     url(r'^delete_scholar/(?P<id>\d+)$', dview.del_scholar),
     url(r'^edit_one_scholar/(?P<id>\d+)$', dview.edit_one_scholar),
     url(r'^check_one_scholar/(?P<id>\d+)$', dview.check_one_scholar),
+
     url(r'^student/$', dview.student),
     url(r'^delete_student/(?P<id>\d+)$', dview.del_student),
     url(r'^edit_one_student/(?P<id>\d+)$', dview.edit_one_student),
@@ -64,19 +65,45 @@ urlpatterns = [
 
     # 用户认证
     url(r'^authen_user/$',dview.authen_user),
+    url(r'^check_auth_exist_user/$',dview.check_auth_exist_user),
     url(r'^del_authen/(?P<authen_id>\d+)$', dview.del_authen),
+    url(r'^del_exist_scholar_authen/(?P<authen_id>\d+)$', dview.del_exist_scholar_authen),
     url(r'^pass_authen/(?P<authen_id>\d+)$', dview.pass_authen),
+    url(r'^pass_exist_scholar_authen/(?P<authen_id>\d+)$', dview.pass_exist_scholar_authen),
+    url(r'^authen_user_detail/(?P<id>\d+)', dview.authen_user_detail),
+    url(r'^exist_user_auth_detail/(?P<authen_id>\d+)', dview.exist_user_auth_detail),
 
     # # 添加爬取结果
-    url(r'^add_get_achievement/$', dview.add_get_achievement),
-    url(r'^pass_new_achievement/(?P<id>\d+)$', dview.pass_new_achievement),
-    url(r'^del_new_achievement/(?P<id>\d+)$', dview.del_new_achievement),
+    # url(r'^add_get_achievement/$', dview.add_get_achievement),
+    # url(r'^pass_new_achievement/(?P<id>\d+)$', dview.pass_new_achievement),
+    # url(r'^del_new_achievement/(?P<id>\d+)$', dview.del_new_achievement),
 
     # 成果学者相关
     url(r'^scholar_achiev/(?P<id>\d+)$', dview.check_scholar_achievement),
     url(r'^achiev_scholar/(?P<id>\d+)$', dview.check_achievement_scholar),
     url(r'^last_page/$', dview.to_last_page),
     url(r'^department_scholar/(?P<id>\d+)$', dview.check_department_scholar),
+
+    # 成果搜索
+    url(r'^search_ach/', dview.search_ach),
+    url(r'^change_search/', dview.change_search_ach),
+    url(r'^check_search_ach/', dview.check_search_ach),
+
+    # 成果认证细节相关
+    url(r'^achauthen_scholar/(?P<id>\d+)$', dview.check_achauthen_scholar),
+
+    # 公告发布相关
+    url(r'^check_announce', dview.release_announce),
+    url(r'^del_announce/(?P<id>\d+)$', dview.del_announce),
+
+    # 举报相关
+    url(r'^checkreport/', dview.check_report),
+    url(r'^delete_one_report/(?P<id>\d+)$', dview.delete_one_report),
+    url(r'^check_one_report/(?P<id>\d+)$', dview.add_pass_report),
+    url(r'^report_detail/(?P<id>\d+)$', dview.show_report_detail),
+    # url(r'^reject_report/(?P<id>\d+)$', dview.reject_report),
+
+    url(r'^logout/', dview.logout),
 
 
     #  小程序相关
@@ -100,4 +127,7 @@ urlpatterns = [
     url(r'ScholarSearch', dview.ScholarSearch),
     url(r'WxReport', dview.WxReport),
     url(r'GetDepartment', dview.GetDepartment),
+    url(r'getNotice', dview.getNotice),
+    url(r'getAllNotice', dview.getAllNotice),
+    url(r'achievePost', dview.achievePost),
 ]

@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="Dashboard">
+  <meta name="keyword" content="Dashboard, Bootstrap, Admin, Template, Theme, Responsive, Fluid, Retina">
+  <title>管理员查看成果信息</title>
+
+  <!-- Favicons -->
+  <link href="/templates/Dashio/img/favicon.png" rel="icon">
+  <link href="/templates/Dashio/img/apple-touch-icon.png" rel="apple-touch-icon">
+
+  <!-- Bootstrap core CSS -->
+  <link href="/templates/Dashio/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <!--external css-->
+  <link href="/templates/Dashio/lib/font-awesome/css/font-awesome.css" rel="stylesheet" />
+  <link rel="stylesheet" type="text/css" href="/templates/Dashio/css/zabuto_calendar.css">
+  <link rel="stylesheet" type="text/css" href="/templates/Dashio/lib/gritter/css/jquery.gritter.css" />
+  <link href="/templates/Dashio/lib/advanced-datatable/css/demo_page.css" rel="stylesheet" />
+  <link href="/templates/Dashio/lib/advanced-datatable/css/demo_table.css" rel="stylesheet" />
+  <link rel="stylesheet" href="/templates/Dashio/lib/advanced-datatable/css/DT_bootstrap.css" />
+  <!-- Custom styles for this template -->
+  <link href="/templates/Dashio/css/style.css" rel="stylesheet">
+  <link href="/templates/Dashio/css/style-responsive.css" rel="stylesheet">
+
+  <!-- =======================================================
+    Template Name: Dashio
+    Template URL: https://templatemag.com/dashio-bootstrap-admin-template/
+    Author: TemplateMag.com
+    License: https://templatemag.com/license/
+  ======================================================= -->
+</head>
+
+<body>
+  <section id="container">
+    <!-- **********************************************************************************************************************************************************
+        TOP BAR CONTENT & NOTIFICATIONS
+        *********************************************************************************************************************************************************** -->
+    <!--header start-->
+    {% include 'Dashio/common_header.html' %}
+    <!--header end-->
+    <!-- **********************************************************************************************************************************************************
+        MAIN SIDEBAR MENU
+        *********************************************************************************************************************************************************** -->
+    <!--sidebar start-->
+    <aside>
+      {% include 'Dashio/nav.html' %}
+    </aside>
+    <!--sidebar end-->
+    <!-- **********************************************************************************************************************************************************
+        MAIN CONTENT
+        *********************************************************************************************************************************************************** -->
+    <!--main content start-->
+    <section id="main-content">
+      <section class="wrapper">
+       <h4><i class="fa fa-angle-right"></i>成果信息模糊搜索</h4>
+
+          <!-- page start-->
+            <div class="row mt">
+                <div class="form-panel">
+                    <form class="form-horizontal style-form" method="post" action="/check_search_ach/">
+                        <div class="form-group">
+                          <div class="col-md-1 col-xs-1">
+                            <select class="form-control " name="release_year_type">
+<!--                              {%  if search_dict.release_year_type == 'OR'%}-->
+<!--                              <option value="OR" selected = "selected" > OR </option>-->
+<!--                              <option value="AND"> AND </option>-->
+<!--                              <option value="NOT"> NOT </option>-->
+<!--                              {% elif  search_dict.release_year_type == 'AND'%}-->
+<!--                              <option value="OR"> OR </option>-->
+<!--                              <option value="AND" selected = "selected" > AND </option>-->
+<!--                              <option value="NOT"> NOT </option>-->
+<!--                              {% elif search_dict.release_year_type == 'NOT'%}-->
+<!--                              <option value="OR"> OR </option>-->
+<!--                              <option value="AND"> AND </option>-->
+<!--                              <option value="NOT" selected = "selected"> NOT </option>-->
+<!--                              {% else %}-->
+<!--                              <option value="OR" selected = "selected" > OR </option>-->
+<!--                              <option value="AND"> AND </option>-->
+<!--                              <option value="NOT"> NOT </option>-->
+<!--                              {% endif %}-->
+                              <option value="AND"> AND </option>
+                            </select>
+                          </div>
+                            <label class="control-label col-md-2 cd-xs-8">成果发表年份</label>
+                            <div class="col-md-2 col-xs-8">
+                               <select class="form-control " name="release_year">
+                                 {%  if search_dict.release_year == 'all' %}
+                                 <option selected = "selected"> all </option>
+                                 {% else %}
+                                 <option > all </option>
+                                 {% endif %}
+                                 {%  for y in search_dict.year%}
+                                 {%  if search_dict.release_year == y.year%}
+                                 <option selected = "selected"> {{ y.year }} </option>
+                                 {% else %}
+                                <option > {{ y.year }} </option>
+                                 {% endif %}
+                                {% endfor %}
+                            </select>
+                            </div>
+                          <label class="control-label col-md-1">至</label>
+<!--                          <p>至</p>-->
+                          <div class="col-md-2 col-xs-8">
+                            <select class="form-control " name="release_year2">
+                              {%  if search_dict.release_year2 == 'all' %}
+                              <option selected = "selected"> all </option>
+                              {% else %}
+                              <option > all </option>
+                              {% endif %}
+                              {%  for y in search_dict.year%}
+                              {%  if search_dict.release_year2 == y.year%}
+                              <option selected = "selected"> {{ y.year }} </option>
+                              {% else %}
+                              <option > {{ y.year }} </option>
+                              {% endif %}
+                              {% endfor %}
+                            </select>
+                          </div>
+
+                        </div>
+
+<!--                        <div class="form-inline">-->
+                            <div class="form-group">
+                              <div class="col-md-1 col-xs-1">
+                                <select class="form-control " name="ach_keyword_type">
+                                  {%  if search_dict.ach_keyword_type == 'OR'%}
+                                  <option value="OR" selected = "selected" > OR </option>
+                                  <option value="AND"> AND </option>
+                                  <option value="NOT"> NOT </option>
+                                  {% elif  search_dict.ach_keyword_type == 'AND'%}
+                                  <option value="OR"> OR </option>
+                                  <option value="AND" selected = "selected" > AND </option>
+                                  <option value="NOT"> NOT </option>
+                                  {% elif  search_dict.ach_keyword_type == 'NOT'%}
+                                  <option value="OR"> OR </option>
+                                  <option value="AND"> AND </option>
+                                  <option value="NOT" selected = "selected"> NOT </option>
+                                  {% else %}
+                                  <option value="OR" selected = "selected" > OR </option>
+                                  <option value="AND"> AND </option>
+                                  <option value="NOT"> NOT </option>
+                                  {% endif %}
+                                </select>
+                              </div>
+                                <label class="control-label col-md-2 cd-xs-8">成果关键词</label>
+                                <div class="col-md-3 col-xs-11">
+                                    <input type="text" class="form-control" name="ach_keyword" value="{{search_dict.keyword}}"/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                              <div class="col-md-1 col-xs-1">
+                                <select class="form-control " name="author_name_type">
+                                  {%  if search_dict.author_name_type == 'OR'%}
+                                  <option value="OR" selected = "selected" > OR </option>
+                                  <option value="AND"> AND </option>
+                                  <option value="NOT"> NOT </option>
+                                  {% elif  search_dict.author_name_type == 'AND'%}
+                                  <option value="OR"> OR </option>
+                                  <option value="AND" selected = "selected" > AND </option>
+                                  <option value="NOT"> NOT </option>
+                                  {% elif  search_dict.author_name_type == 'NOT'%}
+                                  <option value="OR"> OR </option>
+                                  <option value="AND"> AND </option>
+                                  <option value="NOT" selected = "selected"> NOT </option>
+                                  {% else %}
+                                  <option value="OR" selected = "selected" > OR </option>
+                                  <option value="AND"> AND </option>
+                                  <option value="NOT"> NOT </option>
+                                  {% endif %}
+                                </select>
+                              </div>
+                                <label class="control-label col-md-2 cd-xs-8">作者名</label>
+                                <div class="col-md-3 col-xs-11">
+                                     <input type="text" class="form-control"  name="author_name" value="{{search_dict.author_name}}"/>
+                                </div>
+                            </div>
+<!--                        </div>-->
+                        <div class="form-group">
+                          <div class="col-md-1 col-xs-1">
+                            <select class="form-control " name="ach_name_type">
+                              {%  if search_dict.ach_name_type == 'OR'%}
+                              <option value="OR" selected = "selected" > OR </option>
+                              <option value="AND"> AND </option>
+                              <option value="NOT"> NOT </option>
+                              {% elif  search_dict.ach_name_type == 'AND'%}
+                              <option value="OR"> OR </option>
+                              <option value="AND" selected = "selected" > AND </option>
+                              <option value="NOT"> NOT </option>
+                              {% elif  search_dict.ach_name_type == 'NOT'%}
+                              <option value="OR"> OR </option>
+                              <option value="AND"> AND </option>
+                              <option value="NOT" selected = "selected"> NOT </option>
+                              {% else %}
+                              <option value="OR" selected = "selected" > OR </option>
+                              <option value="AND"> AND </option>
+                              <option value="NOT"> NOT </option>
+                              {% endif %}
+                            </select>
+                          </div>
+                             <label class="control-label col-md-2 cd-xs-8">成果名</label>
+                                <div class="col-md-3 col-xs-11">
+                                     <input type="text" class="form-control"  name="ach_name" value="{{search_dict.ach_name}}"/>
+                                </div>
+                        </div>
+
+                      <div class="form-group">
+                        <div class="col-md-1 col-xs-1">
+                          <select class="form-control " name="type1">
+                            {%  if search_dict.type1 == 'OR'%}
+                            <option value="OR" selected = "selected" > OR </option>
+                            <option value="AND"> AND </option>
+                            <option value="NOT"> NOT </option>
+                            {% elif  search_dict.type1 == 'AND'%}
+                            <option value="OR"> OR </option>
+                            <option value="AND" selected = "selected" > AND </option>
+                            <option value="NOT"> NOT </option>
+                            {% elif  search_dict.type1 == 'NOT'%}
+                            <option value="OR"> OR </option>
+                            <option value="AND"> AND </option>
+                            <option value="NOT" selected = "selected"> NOT </option>
+                            {% else %}
+                            <option value="OR" selected = "selected" > OR </option>
+                            <option value="AND"> AND </option>
+                            <option value="NOT"> NOT </option>
+                            {% endif %}
+                          </select>
+                        </div>
+                        <div class="col-md-2 col-xs-8">
+                          <select class="form-control " name="search1">
+                            {%  if search_dict.search1 == '成果关键词'%}
+                            <option value="no"> 无 </option>
+                            <option value="keyword" selected = "selected"> 成果关键词 </option>
+                            <option value="author"> 作者名 </option>
+                            <option value="name"> 成果名 </option>
+                            {% elif  search_dict.search1 == '作者名'%}
+                            <option value="no"> 无 </option>
+                            <option value="keyword"> 成果关键词 </option>
+                            <option value="author" selected = "selected"> 作者名 </option>
+                            <option value="name"> 成果名 </option>
+                            {% elif  search_dict.search1 == '成果名'%}
+                            <option value="no"> 无 </option>
+                            <option value="keyword"> 成果关键词 </option>
+                            <option value="author"> 作者名 </option>
+                            <option value="name" selected = "selected"> 成果名 </option>
+                            {% else %}
+                            <option value="no" selected = "selected" > 无 </option>
+                            <option value="keyword"> 成果关键词 </option>
+                            <option value="author"> 作者名 </option>
+                            <option value="name"> 成果名 </option>
+                            {% endif %}
+                          </select>
+                        </div>
+                        <div class="col-md-3 col-xs-11">
+                          <input type="text" class="form-control" name="search1_text" value="{{search_dict.search1_text}}"/>
+                        </div>
+                      </div>
+
+                      <div class="form-group">
+                        <div class="col-md-1 col-xs-1">
+                          <select class="form-control " name="type2">
+                            {%  if search_dict.type2 == 'OR'%}
+                            <option value="OR" selected = "selected" > OR </option>
+                            <option value="AND"> AND </option>
+                            <option value="NOT"> NOT </option>
+                            {% elif  search_dict.type2 == 'AND'%}
+                            <option value="OR"> OR </option>
+                            <option value="AND" selected = "selected" > AND </option>
+                            <option value="NOT"> NOT </option>
+                            {% elif  search_dict.type2 == 'NOT'%}
+                            <option value="OR"> OR </option>
+                            <option value="AND"> AND </option>
+                            <option value="NOT" selected = "selected"> NOT </option>
+                            {% else %}
+                            <option value="OR" selected = "selected" > OR </option>
+                            <option value="AND"> AND </option>
+                            <option value="NOT"> NOT </option>
+                            {% endif %}
+                          </select>
+                        </div>
+                        <div class="col-md-2 col-xs-8">
+                          <select class="form-control " name="search2">
+                            {%  if search_dict.search2 == '成果关键词'%}
+                            <option value="no"> 无 </option>
+                            <option value="keyword" selected = "selected"> 成果关键词 </option>
+                            <option value="author"> 作者名 </option>
+                            <option value="name"> 成果名 </option>
+                            {% elif  search_dict.search2 == '作者名'%}
+                            <option value="no"> 无 </option>
+                            <option value="keyword"> 成果关键词 </option>
+                            <option value="author" selected = "selected"> 作者名 </option>
+                            <option value="name"> 成果名 </option>
+                            {% elif  search_dict.search2 == '成果名'%}
+                            <option value="no"> 无 </option>
+                            <option value="keyword"> 成果关键词 </option>
+                            <option value="author"> 作者名 </option>
+                            <option value="name" selected = "selected"> 成果名 </option>
+                            {% else %}
+                            <option value="no" selected = "selected" > 无 </option>
+                            <option value="keyword"> 成果关键词 </option>
+                            <option value="author"> 作者名 </option>
+                            <option value="name"> 成果名 </option>
+                            {% endif %}
+                          </select>
+                        </div>
+                        <div class="col-md-3 col-xs-11">
+                          <input type="text" class="form-control" name="search2_text" value="{{search_dict.search2_text}}"/>
+                        </div>
+                      </div>
+
+                      <div class="form-group">
+                        <div class="col-md-1 col-xs-1">
+                          <select class="form-control " name="type3">
+                            {%  if search_dict.type3 == 'OR'%}
+                            <option value="OR" selected = "selected" > OR </option>
+                            <option value="AND"> AND </option>
+                            <option value="NOT"> NOT </option>
+                            {% elif  search_dict.type3 == 'AND'%}
+                            <option value="OR"> OR </option>
+                            <option value="AND" selected = "selected" > AND </option>
+                            <option value="NOT"> NOT </option>
+                            {% elif  search_dict.type3 == 'NOT'%}
+                            <option value="OR"> OR </option>
+                            <option value="AND"> AND </option>
+                            <option value="NOT" selected = "selected"> NOT </option>
+                            {% else %}
+                            <option value="OR" selected = "selected" > OR </option>
+                            <option value="AND"> AND </option>
+                            <option value="NOT"> NOT </option>
+                            {% endif %}
+                          </select>
+                        </div>
+                        <div class="col-md-2 col-xs-8">
+                          <select class="form-control " name="search3">
+                            {%  if search_dict.search3 == '成果关键词'%}
+                            <option value="no"> 无 </option>
+                            <option value="keyword" selected = "selected"> 成果关键词 </option>
+                            <option value="author"> 作者名 </option>
+                            <option value="name"> 成果名 </option>
+                            {% elif  search_dict.search3 == '作者名'%}
+                            <option value="no"> 无 </option>
+                            <option value="keyword"> 成果关键词 </option>
+                            <option value="author" selected = "selected"> 作者名 </option>
+                            <option value="name"> 成果名 </option>
+                            {% elif  search_dict.search3 == '成果名'%}
+                            <option value="no"> 无 </option>
+                            <option value="keyword"> 成果关键词 </option>
+                            <option value="author"> 作者名 </option>
+                            <option value="name" selected = "selected"> 成果名 </option>
+                            {% else %}
+                            <option value="no" selected = "selected" > 无 </option>
+                            <option value="keyword"> 成果关键词 </option>
+                            <option value="author"> 作者名 </option>
+                            <option value="name"> 成果名 </option>
+                            {% endif %}
+                          </select>
+                        </div>
+                        <div class="col-md-3 col-xs-11">
+                          <input type="text" class="form-control" name="search3_text" value="{{search_dict.search3_text}}"/>
+                        </div>
+                      </div>
+
+                      <div class="form-group">
+                        <div class="col-md-1 col-xs-1">
+                          <select class="form-control " name="type4">
+                            {%  if search_dict.type4 == 'OR'%}
+                            <option value="OR" selected = "selected" > OR </option>
+                            <option value="AND"> AND </option>
+                            <option value="NOT"> NOT </option>
+                            {% elif  search_dict.type4 == 'AND'%}
+                            <option value="OR"> OR </option>
+                            <option value="AND" selected = "selected" > AND </option>
+                            <option value="NOT"> NOT </option>
+                            {% elif  search_dict.type4 == 'NOT'%}
+                            <option value="OR"> OR </option>
+                            <option value="AND"> AND </option>
+                            <option value="NOT" selected = "selected"> NOT </option>
+                            {% else %}
+                            <option value="OR" selected = "selected" > OR </option>
+                            <option value="AND"> AND </option>
+                            <option value="NOT"> NOT </option>
+                            {% endif %}
+                          </select>
+                        </div>
+                        <div class="col-md-2 col-xs-8">
+                          <select class="form-control " name="search4">
+                            {%  if search_dict.search4 == '成果关键词'%}
+                            <option value="no"> 无 </option>
+                            <option value="keyword" selected = "selected"> 成果关键词 </option>
+                            <option value="author"> 作者名 </option>
+                            <option value="name"> 成果名 </option>
+                            {% elif  search_dict.search4 == '作者名'%}
+                            <option value="no"> 无 </option>
+                            <option value="keyword"> 成果关键词 </option>
+                            <option value="author" selected = "selected"> 作者名 </option>
+                            <option value="name"> 成果名 </option>
+                            {% elif  search_dict.search4 == '成果名'%}
+                            <option value="no"> 无 </option>
+                            <option value="keyword"> 成果关键词 </option>
+                            <option value="author"> 作者名 </option>
+                            <option value="name" selected = "selected"> 成果名 </option>
+                            {% else %}
+                            <option value="no" selected = "selected" > 无 </option>
+                            <option value="keyword"> 成果关键词 </option>
+                            <option value="author"> 作者名 </option>
+                            <option value="name"> 成果名 </option>
+                            {% endif %}
+                          </select>
+                        </div>
+                        <div class="col-md-3 col-xs-11">
+                          <input type="text" class="form-control" name="search4_text" value="{{search_dict.search4_text}}"/>
+                        </div>
+                      </div>
+
+                      <div class="form-group">
+                        <div class="col-md-1 col-xs-1">
+                          <select class="form-control " name="type5">
+                            {%  if search_dict.type5 == 'OR'%}
+                            <option value="OR" selected = "selected" > OR </option>
+                            <option value="AND"> AND </option>
+                            <option value="NOT"> NOT </option>
+                            {% elif  search_dict.type5 == 'AND'%}
+                            <option value="OR"> OR </option>
+                            <option value="AND" selected = "selected" > AND </option>
+                            <option value="NOT"> NOT </option>
+                            {% elif  search_dict.type5 == 'NOT'%}
+                            <option value="OR"> OR </option>
+                            <option value="AND"> AND </option>
+                            <option value="NOT" selected = "selected"> NOT </option>
+                            {% else %}
+                            <option value="OR" selected = "selected" > OR </option>
+                            <option value="AND"> AND </option>
+                            <option value="NOT"> NOT </option>
+                            {% endif %}
+                          </select>
+                        </div>
+                        <div class="col-md-2 col-xs-8">
+                          <select class="form-control " name="search5">
+                            {%  if search_dict.search5 == '成果关键词'%}
+                            <option value="no"> 无 </option>
+                            <option value="keyword" selected = "selected"> 成果关键词 </option>
+                            <option value="author"> 作者名 </option>
+                            <option value="name"> 成果名 </option>
+                            {% elif  search_dict.search5 == '作者名'%}
+                            <option value="no"> 无 </option>
+                            <option value="keyword"> 成果关键词 </option>
+                            <option value="author" selected = "selected"> 作者名 </option>
+                            <option value="name"> 成果名 </option>
+                            {% elif  search_dict.search5 == '成果名'%}
+                            <option value="no"> 无 </option>
+                            <option value="keyword"> 成果关键词 </option>
+                            <option value="author"> 作者名 </option>
+                            <option value="name" selected = "selected"> 成果名 </option>
+                            {% else %}
+                            <option value="no" selected = "selected" > 无 </option>
+                            <option value="keyword"> 成果关键词 </option>
+                            <option value="author"> 作者名 </option>
+                            <option value="name"> 成果名 </option>
+                            {% endif %}
+                          </select>
+                        </div>
+                        <div class="col-md-3 col-xs-11">
+                          <input type="text" class="form-control" name="search5_text" value="{{search_dict.search5_text}}"/>
+                        </div>
+                      </div>
+
+                        <div class = "form-send">
+                          <button type="submit" class="btn btn-theme">搜索</button>
+<!--                              <button type="submit" formmethod="post" href="/checkachievement" class="btn btn-theme">搜索</button>-->
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        {% if search_dict.err_msg %}
+        <script>
+          alert('{{ search_dict.err_msg }}');
+        </script>
+        {% endif %}
+          <!-- page end-->
+
+        <!-- /row -->
+      </section>
+      <!-- /wrapper -->
+    </section>
+
+
+    <!--main content end-->
+<!--    footer start-->
+<!--    <footer class="site-footer">-->
+<!--      <div class="text-center">-->
+<!--        <p>-->
+<!--          &copy; Copyrights <strong>Dashio</strong>. All Rights Reserved-->
+<!--        </p>-->
+<!--        <div class="credits">-->
+<!--          &lt;!&ndash;-->
+<!--            You are NOT allowed to delete the credit link to TemplateMag with free version.-->
+<!--            You can delete the credit link only if you bought the pro version.-->
+<!--            Buy the pro version with working PHP/AJAX contact form: https://templatemag.com/dashio-bootstrap-admin-template/-->
+<!--            Licensing information: https://templatemag.com/license/-->
+<!--          &ndash;&gt;-->
+<!--          Created with Dashio template by <a href="https://templatemag.com/">TemplateMag</a>-->
+<!--        </div>-->
+<!--        <a href="index.html#" class="go-top">-->
+<!--          <i class="fa fa-angle-up"></i>-->
+<!--          </a>-->
+<!--      </div>-->
+<!--    </footer>-->
+    <!--footer end-->
+  </section>
+  <!-- js placed at the end of the document so the pages load faster -->
+  <script src="/templates/Dashio/lib/jquery/jquery.min.js"></script>
+  <script type="text/javascript" language="javascript" src="/templates/Dashio/lib/advanced-datatable/js/jquery.js"></script>
+  <script src="/templates/Dashio/lib/bootstrap/js/bootstrap.min.js"></script>
+  <script class="include" type="text/javascript" src="/templates/Dashio/lib/jquery.dcjqaccordion.2.7.js"></script>
+  <script src="/templates/Dashio/lib/jquery.scrollTo.min.js"></script>
+  <script src="/templates/Dashio/lib/jquery.nicescroll.js" type="text/javascript"></script>
+  <script type="text/javascript" language="javascript" src="/templates/Dashio/lib/advanced-datatable/js/jquery.dataTables.js"></script>
+  <script type="text/javascript" src="/templates/Dashio/lib/advanced-datatable/js/DT_bootstrap.js"></script>
+  <!--common script for all pages-->
+  <script src="/templates/Dashio/lib/common-scripts.js"></script>
+  <!--script for this page-->
+  <script src="/templates/Dashio/lib/jquery-ui-1.9.2.custom.min.js"></script>
+  <script type="text/javascript">
+    /* Formating function for row details */
+    function fnFormatDetails(oTable, nTr) {
+      var aData = oTable.fnGetData(nTr);
+      var sOut = '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">';
+      sOut += '<tr><td>成果ID：</td><td>' + aData[1] +'</td></tr>';
+      sOut += '<tr><td>成果名称：</td><td>' + aData[2] +'</td></tr>';
+      sOut += '<tr><td>学者姓名：</td><td>'+aData[3]+'</td></tr>';
+      // sOut += '<tr><td>Extra info:</td><td>And any further details here (images etc)</td></tr>';
+      sOut += '</table>';
+
+      return sOut;
+    }
+
+    $(document).ready(function() {
+      /*
+       * Insert a 'details' column to the table
+       */
+      var nCloneTh = document.createElement('th');
+      var nCloneTd = document.createElement('td');
+      nCloneTd.innerHTML = '<img src="/templates/Dashio/lib/advanced-datatable/images/details_open.png">';
+      nCloneTd.className = "center";
+
+      $('#hidden-table-info thead tr').each(function() {
+        this.insertBefore(nCloneTh, this.childNodes[0]);
+      });
+
+      $('#hidden-table-info tbody tr').each(function() {
+        this.insertBefore(nCloneTd.cloneNode(true), this.childNodes[0]);
+      });
+
+      /*
+       * Initialse DataTables, with no sorting on the 'details' column
+       */
+      var oTable = $('#hidden-table-info').dataTable({
+        "aoColumnDefs": [{
+          "bSortable": false,
+          "aTargets": [0]
+        }],
+        "aaSorting": [
+          [1, 'asc']
+        ]
+      });
+
+      /* Add event listener for opening and closing details
+       * Note that the indicator for showing which row is open is not controlled by DataTables,
+       * rather it is done here
+       */
+      $('#hidden-table-info tbody td img').live('click', function() {
+        var nTr = $(this).parents('tr')[0];
+        if (oTable.fnIsOpen(nTr)) {
+          /* This row is already open - close it */
+          this.src = "/templates/Dashio/lib/advanced-datatable/media/images/details_open.png";
+          oTable.fnClose(nTr);
+        } else {
+          /* Open this row */
+          this.src = "/templates/Dashio/lib/advanced-datatable/images/details_close.png";
+          oTable.fnOpen(nTr, fnFormatDetails(oTable, nTr), 'details');
+        }
+      });
+    });
+  </script>
+</body>
+
+</html>

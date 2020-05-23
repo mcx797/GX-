@@ -60,134 +60,72 @@
           <!-- settings start -->
           <li class="dropdown">
             <a data-toggle="dropdown" class="dropdown-toggle" href="index.html#">
-              <i class="fa fa-tasks"></i>
-              <span class="badge bg-theme">4</span>
-              </a>
+              <i class="fa fa-male"></i>
+              {% if not dict.user_authen_count == 0 %}
+              <span class="badge bg-theme">{{dict.user_authen_count}}</span>
+              {% endif %}
+            </a>
             <ul class="dropdown-menu extended tasks-bar">
               <div class="notify-arrow notify-arrow-green"></div>
               <li>
-                <p class="green">You have 4 pending tasks</p>
+                <p class="green">收到{{dict.user_authen_count}}条用户认证信息</p>
               </li>
+              {% if not dict.user_authen_count == 0 %}
+              {% for user in dict.user_authen %}
               <li>
                 <a href="index.html#">
-                  <div class="task-info">
-                    <div class="desc">Dashio Admin Panel</div>
-                    <div class="percent">40%</div>
-                  </div>
-                  <div class="progress progress-striped">
-                    <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: 40%">
-                      <span class="sr-only">40% Complete (success)</span>
-                    </div>
-                  </div>
+                  <span class="label label-success"><i class="fa fa-plus"></i></span>
+                  <span class="subject">
+                  <span class="from">{{user.name}}</span>
+                  </span>
+                  <span class="message">
+                  进行{% if user.identity == 1 %}学者{% endif %}{% if user.identity == 2 %}学生{% endif %}认证
+                  </span>
                 </a>
               </li>
-              <li>
-                <a href="index.html#">
-                  <div class="task-info">
-                    <div class="desc">Database Update</div>
-                    <div class="percent">60%</div>
-                  </div>
-                  <div class="progress progress-striped">
-                    <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%">
-                      <span class="sr-only">60% Complete (warning)</span>
-                    </div>
-                  </div>
-                </a>
-              </li>
-              <li>
-                <a href="index.html#">
-                  <div class="task-info">
-                    <div class="desc">Product Development</div>
-                    <div class="percent">80%</div>
-                  </div>
-                  <div class="progress progress-striped">
-                    <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100" style="width: 80%">
-                      <span class="sr-only">80% Complete</span>
-                    </div>
-                  </div>
-                </a>
-              </li>
-              <li>
-                <a href="index.html#">
-                  <div class="task-info">
-                    <div class="desc">Payments Sent</div>
-                    <div class="percent">70%</div>
-                  </div>
-                  <div class="progress progress-striped">
-                    <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" style="width: 70%">
-                      <span class="sr-only">70% Complete (Important)</span>
-                    </div>
-                  </div>
-                </a>
-              </li>
-              <li class="external">
-                <a href="#">See All Tasks</a>
-              </li>
+              {% endfor %}
+              {% endif %}
             </ul>
           </li>
           <!-- settings end -->
           <!-- inbox dropdown start-->
-          <li id="header_inbox_bar" class="dropdown">
+          <li id="header_ach_authen" class="dropdown">
             <a data-toggle="dropdown" class="dropdown-toggle" href="index.html#">
-              <i class="fa fa-envelope-o"></i>
-              <span class="badge bg-theme">5</span>
-              </a>
+              <i class="fa fa-book"></i>
+              {% if not dict.ach_authen_count == 0 %}
+              <span class="badge bg-theme">{{dict.ach_authen_count}}</span>
+              {% endif %}
+            </a>
             <ul class="dropdown-menu extended inbox">
               <div class="notify-arrow notify-arrow-green"></div>
               <li>
-                <p class="green">You have 5 new messages</p>
+                <p class="green">收到{{dict.ach_authen_count}}条成果认证信息</p>
               </li>
+              {% if not dict.ach_authen_count == 0 %}
+              {% for ach in dict.ach_authen %}
               <li>
                 <a href="index.html#">
-                  <span class="photo"><img alt="avatar" src="img/ui-zac.jpg"></span>
+                  <span class="label label-success"><i class="fa fa-plus"></i></span>
                   <span class="subject">
-                  <span class="from">Zac Snider</span>
-                  <span class="time">Just now</span>
+                  <span class="from">{{ach.author_name}}</span>
                   </span>
                   <span class="message">
-                  Hi mate, how is everything?
+                  发布成果：{{ach.a_name}}
                   </span>
-                  </a>
+                </a>
               </li>
-              <li>
-                <a href="index.html#">
-                  <span class="photo"><img alt="avatar" src="img/ui-divya.jpg"></span>
-                  <span class="subject">
-                  <span class="from">Divya Manian</span>
-                  <span class="time">40 mins.</span>
-                  </span>
-                  <span class="message">
-                  Hi, I need your help with this.
-                  </span>
-                  </a>
-              </li>
-              <li>
-                <a href="index.html#">
-                  <span class="photo"><img alt="avatar" src="img/ui-danro.jpg"></span>
-                  <span class="subject">
-                  <span class="from">Dan Rogers</span>
-                  <span class="time">2 hrs.</span>
-                  </span>
-                  <span class="message">
-                  Love your new Dashboard.
-                  </span>
-                  </a>
-              </li>
-              <li>
-                <a href="index.html#">
-                  <span class="photo"><img alt="avatar" src="img/ui-sherman.jpg"></span>
-                  <span class="subject">
-                  <span class="from">Dj Sherman</span>
-                  <span class="time">4 hrs.</span>
-                  </span>
-                  <span class="message">
-                  Please, answer asap.
-                  </span>
-                  </a>
-              </li>
-              <li>
-                <a href="index.html#">See all messages</a>
-              </li>
+              {% endfor %}
+              {% endif %}
+              <!--              <li>-->
+              <!--                <a href="index.html#">-->
+              <!--                  <span class="subject">-->
+              <!--                  <span class="from">123</span>-->
+              <!--                  </span>-->
+              <!--                  <span class="message">-->
+              <!--                  发布成果：123-->
+              <!--                  </span>-->
+              <!--                </a>-->
+              <!--              </li>-->
             </ul>
           </li>
           <!-- inbox dropdown end -->
@@ -195,44 +133,37 @@
           <li id="header_notification_bar" class="dropdown">
             <a data-toggle="dropdown" class="dropdown-toggle" href="index.html#">
               <i class="fa fa-bell-o"></i>
-              <span class="badge bg-warning">7</span>
-              </a>
+              {% if not dict.report_count == 0 %}
+              <span class="badge bg-warning">{{dict.report_count}}</span>
+              {% endif %}
+            </a>
             <ul class="dropdown-menu extended notification">
               <div class="notify-arrow notify-arrow-yellow"></div>
               <li>
-                <p class="yellow">You have 7 new notifications</p>
+                <p class="yellow">收到{{dict.report_count}}条举报信息</p>
               </li>
-              <li>
-                <a href="index.html#">
-                  <span class="label label-danger"><i class="fa fa-bolt"></i></span>
-                  Server Overloaded.
-                  <span class="small italic">4 mins.</span>
-                  </a>
-              </li>
+              {% if not dict.report_count == 0 %}
+              {% for rep in dict.reports %}
+<!--              <li>-->
+<!--                                <a href="index.html#">-->
+<!--                                  <span class="label label-warning"><i class="fa fa-bell"></i></span>-->
+<!--                                  Memory #2 Not Responding.-->
+<!--                                  <span class="small italic">30 mins.</span>-->
+<!--                                  </a>-->
+<!--                              </li>-->
               <li>
                 <a href="index.html#">
                   <span class="label label-warning"><i class="fa fa-bell"></i></span>
-                  Memory #2 Not Responding.
-                  <span class="small italic">30 mins.</span>
-                  </a>
+                  <span class="subject">
+                  <span class="from">用户{{rep.id}}</span>
+                  </span>
+                  <span class="message">
+                  举报 {{rep.user_name}}
+                  </span>
+                </a>
               </li>
-              <li>
-                <a href="index.html#">
-                  <span class="label label-danger"><i class="fa fa-bolt"></i></span>
-                  Disk Space Reached 85%.
-                  <span class="small italic">2 hrs.</span>
-                  </a>
-              </li>
-              <li>
-                <a href="index.html#">
-                  <span class="label label-success"><i class="fa fa-plus"></i></span>
-                  New User Registered.
-                  <span class="small italic">3 hrs.</span>
-                  </a>
-              </li>
-              <li>
-                <a href="index.html#">See all notifications</a>
-              </li>
+              {% endfor %}
+              {% endif %}
             </ul>
           </li>
           <!-- notification dropdown end -->
@@ -241,7 +172,7 @@
       </div>
       <div class="top-menu">
         <ul class="nav pull-right top-menu">
-          <li><a class="logout" href="/login">Logout</a></li>
+          <li><a class="logout" href="/logout">Logout</a></li>
         </ul>
       </div>
     </header>
@@ -251,66 +182,7 @@
         *********************************************************************************************************************************************************** -->
     <!--sidebar start-->
     <aside>
-      <div id="sidebar" class="nav-collapse ">
-        <!-- sidebar menu start-->
-        <ul class="sidebar-menu" id="nav-accordion">
-<!--          <p class="centered"><a href="profile.html"><img src="img/ui-sam.jpg" class="img-circle" width="80"></a></p>-->
-          <h3 class="centered">ID:</h3>
-          <h5 class="centered">{{dict.admin_id}}</h5>
-          <li class="mt">
-            <a class="active" href="/server">
-              <i class="fa fa-dashboard"></i>
-              <span>管理主页</span>
-              </a>
-          </li>
-          <li class="sub-menu">
-            <a href="javascript:;">
-              <i class="fa fa-desktop"></i>
-              <span>用户管理</span>
-              </a>
-            <ul class="sub">
-              <li><a href="/checkuser">查看用户</a></li>
-              <li><a href="/scholar">查看学者</a></li>
-              <li><a href="/student">查看学生</a></li>
-              <li><a href="/authen_user">待认证信息</a></li>
-            </ul>
-          </li>
-          <li class="sub-menu">
-            <a href="javascript:;">
-              <i class="fa fa-cogs"></i>
-              <span>成果管理</span>
-            </a>
-            <ul class="sub">
-              <li><a href="/checkachievement">查看成果</a></li>
-              <li><a href="/check_newach_authen">待审批成果</a></li>
-              <li><a href="/addachievement">添加成果</a></li>
-                <li><a href="/add_get_achievement">爬虫添加成果</a></li>
-            </ul>
-          </li>
-          <li class="sub-menu">
-            <a href="javascript:;">
-              <i class="fa fa-book"></i>
-              <span>院系机构管理</span>
-            </a>
-            <ul class="sub">
-              <li><a href="/checkdepartment">查看所有院系</a></li>
-              <li><a href="/adddepartment">添加院系信息</a></li>
-            </ul>
-          </li>
-
-          <li class="sub-menu">
-            <a href="javascript:;">
-              <i class="fa fa-book"></i>
-              <span>举报信息管理</span>
-            </a>
-            <ul class="sub">
-              <li><a href="/checkreport">查看举报信息</a></li>
-            </ul>
-          </li>
-
-        </ul>
-        <!-- sidebar menu end-->
-      </div>
+     {% include 'Dashio/nav.html' %}
     </aside>
     <!--sidebar end-->
     <!-- **********************************************************************************************************************************************************

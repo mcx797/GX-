@@ -41,6 +41,44 @@ class achievement_tab(models.Model):
         db_table = 'achievement_tab'
         
         
+        
+        
+'''
+学生成果表
+'''
+class stuachievement_tab(models.Model):
+    a_id = models.AutoField(primary_key=True)  # 主键，标识id
+    name = models.CharField(max_length=150)  # 成果名
+    year = models.CharField(max_length=5)    #成果年份
+    author_name = models.CharField(max_length=150) #作者名
+    citation = models.IntegerField(default = -1)   # 被引数,若未爬到数据设为-1
+    j_a_name = models.CharField(max_length=150)   #成果出处
+    file = models.CharField(max_length=150)       #文件在服务器中的位置， 没有时为null
+    link = models.CharField(max_length=150)       #文件链接（只保留一个）
+    kind = models.CharField(max_length =10) #文献类型
+    num_view = models.IntegerField(default=0)#浏览次数
+    brief = models.IntegerField(default = 0) #记录简介的第一项在AchieveBreif里的id
+    
+    keyword = models.CharField(max_length=200, default="NULL")
+
+    class Meta:
+        # managed = False
+        db_table = 'stuachievement_tab'
+              
+'''
+学生与成果的关联表
+'''
+class student_achievement_tab(models.Model):
+    id = models.AutoField(primary_key=True)
+    student_id = models.IntegerField()
+    a_id = models.IntegerField()
+
+    class Meta:
+        # managed = False
+        db_table = 'student_achievement_tab'
+        
+
+
 
 '''
 成果简介表
@@ -55,7 +93,8 @@ class achievement_brief_tab(models.Model):
     
     class Meta:
         # managed = False
-        db_table = 'achievement_brief_tab' 
+        db_table = 'achievement_brief_tab'
+ 
         
 
 '''
@@ -107,6 +146,7 @@ class achievement_authen_tab(models.Model):
     kind = models.CharField(max_length =10) #文献类型
     num_view = models.IntegerField(default=0)#浏览次数
     keyword = models.CharField(max_length=200, default="NULL")#关键词，以，分开
+    brief = models.CharField(max_length = 600, default='NULL')
 
     class Meta:
         # managed = False
@@ -118,7 +158,7 @@ class achievement_authen_tab(models.Model):
 '''
 class sch_ach_authen_tab(models.Model):
     id = models.AutoField(primary_key=True)
-    scholar_id = models.IntegerField()
+    student_id = models.IntegerField()
     a_id = models.IntegerField()
 
     class Meta:
@@ -210,7 +250,7 @@ class information_tab(models.Model):
 
 
 '''
-个人
+个人通知信息。
 '''
 class person_inform_tab(models.Model):
     personInfId = models.AutoField(primary_key = True)
@@ -304,17 +344,36 @@ class student_tab(models.Model):
         # managed = False
         db_table = 'student_tab'
 
+'''
+class stuachievement_tab(models.Model):
+    a_id = models.AutoField(primary_key=True)  # 主键，标识id
+    name = models.CharField(max_length=150)  # 成果名
+    year = models.CharField(max_length=5)  # 成果年份
+    author_name = models.CharField(max_length=150)  # 作者名
+    citation = models.IntegerField(default=-1)  # 被引数,若未爬到数据设为-1
+    j_a_name = models.CharField(max_length=150)  # 成果出处
+    file = models.CharField(max_length=150)  # 文件在服务器中的位置， 没有时为null
+    link = models.CharField(max_length=150)  # 文件链接（只保留一个）
+    kind = models.CharField(max_length=10)  # 文献类型
+    num_view = models.IntegerField(default=0)  # 浏览次数
+    get_id = models.IntegerField(default=0)  # 在原系统中的id,用于关联
+    brief = models.IntegerField(default=0)  # 记录简介的第一项在AchieveBreif里的id
+
+    keyword = models.CharField(max_length=200, default="NULL")
+
+    class Meta:
+        # managed = False
+        db_table = 'stuachievement_tab'
 
 
-'''
-学生和成果的关联表
-'''
 class student_achievement_tab(models.Model):
+    id = models.AutoField(primary_key=True)
     student_id = models.IntegerField()
     a_id = models.IntegerField()
     class Meta:
         # managed = False
         db_table = 'student_achievement_tab'
+'''
 
 '''
 学生与学院的关联表
@@ -419,3 +478,14 @@ class new_relation_tab(models.Model):
     class Meta:
         # managed = False
         db_table = 'new_relation_tab'
+        
+
+    
+    
+    
+    
+    
+    
+    
+    
+    

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="Dashboard">
+    <meta name="keyword" content="Dashboard, Bootstrap, Admin, Template, Theme, Responsive, Fluid, Retina">
+    <title>管理员查看成果信息详情</title>
+
+    <!-- Favicons -->
+    <link href="/templates/Dashio/img/favicon.png" rel="icon">
+    <link href="/templates/Dashio/img/apple-touch-icon.png" rel="apple-touch-icon">
+
+    <!-- Bootstrap core CSS -->
+    <link href="/templates/Dashio/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <!--external css-->
+    <link href="/templates/Dashio/lib/font-awesome/css/font-awesome.css" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="/templates/Dashio/lib/bootstrap-datepicker/css/datepicker.css" />
+    <link rel="stylesheet" type="text/css" href="/templates/Dashio/lib/bootstrap-daterangepicker/daterangepicker.css" />
+    <!-- Custom styles for this template -->
+    <link href="/templates/Dashio/css/style.css" rel="stylesheet">
+    <link href="/templates/Dashio/css/style-responsive.css" rel="stylesheet">
+
+    <!-- =======================================================
+      Template Name: Dashio
+      Template URL: https://templatemag.com/dashio-bootstrap-admin-template/
+      Author: TemplateMag.com
+      License: https://templatemag.com/license/
+    ======================================================= -->
+</head>
+
+<body>
+<section id="container">
+    <!-- **********************************************************************************************************************************************************
+        TOP BAR CONTENT & NOTIFICATIONS
+        *********************************************************************************************************************************************************** -->
+    <!--header start-->
+    {% include 'Dashio/common_header.html' %}
+    <!--header end-->
+    <!-- **********************************************************************************************************************************************************
+        MAIN SIDEBAR MENU
+        *********************************************************************************************************************************************************** -->
+    <!--sidebar start-->
+    <aside>
+        {% include 'Dashio/nav.html' %}
+    </aside>
+    <!--sidebar end-->
+    <!-- **********************************************************************************************************************************************************
+        MAIN CONTENT
+        *********************************************************************************************************************************************************** -->
+    <!--main content start-->
+     <section id="main-content">
+        <section class="wrapper">
+            <h3><i class="fa fa-angle-right"></i> 用户身份认证信息</h3>
+            <!-- BASIC FORM ELELEMNTS -->
+            <div class="row mt">
+                <div class="col-lg-12">
+                    <div class="form-panel">
+                        <h4 class="mb"><i class="fa fa-angle-right"></i> 学者信息</h4>
+                        <form class="form-horizontal style-form" method="post" action="">
+                            <!--                        <form class="contact-form php-mail-form" role="form">-->
+                            <!--                            <form method="post" action="">-->
+                            <div class="form-group">
+                                <label class="col-sm-2 col-sm-2 control-label">学者姓名</label>
+                                <div class="col-sm-10">
+                                    <!--                                    <input type="text" class="form-control" name="d_id" id="d_id" placeholder="院系ID(4位数字串，eg.0000)" data-rule="minlength:4" data-msg="请输入正确4位院系ID" minlength="4" required="required">-->
+                                    {{auth_user.auth_info.name}}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 col-sm-2 control-label">学校</label>
+                                <div class="col-sm-10">
+                                    <!--                                    <input type="text" class="form-control" name="d_name" id="d_name" placeholder="院系名称" data-rule="required" data-msg="请输入正确院系名称" required="required">-->
+                                     {{auth_user.auth_info.school}}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 col-sm-2 control-label">学工号</label>
+                                <div class="col-sm-10">
+
+                                     {{auth_user.auth_info.sno}}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 col-sm-2 control-label">邮箱</label>
+                                <div class="col-sm-10">
+                                    <!--                                    <input type="text" class="form-control" name="d_name" id="d_name" placeholder="院系名称" data-rule="required" data-msg="请输入正确院系名称" required="required">-->
+                                    {{ auth_user.auth_info.email }}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 col-sm-2 control-label">申请身份</label>
+                                <div class="col-sm-10">
+                                    <!--                                    <input type="text" class="form-control" name="d_name" id="d_name" placeholder="院系名称" data-rule="required" data-msg="请输入正确院系名称" required="required">-->
+                                    {% if auth_user.auth_info.identity is 1 %}
+                                    <h5>学者</h5>
+                                    {% endif %}
+                                    {% if  auth_user.auth_info.identity is 2 %}
+                                    <h5>学生</h5>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 col-sm-2 control-label">驳回理由</label>
+                                <div class="col-sm-10">
+                                    <!--                                    <input type="text" class="form-control" name="d_name" id="d_name" placeholder="院系名称" data-rule="required" data-msg="请输入正确院系名称" required="required">-->
+                                    <input type="text" class="form-control" name="reject_info" id="reject_info" placeholder="驳回理由" required="required">
+                                </div>
+                            </div>
+                            <div class="form-send">
+                                <button type="submit" class="btn btn-theme">驳回</button>
+                                <a href="javascript:if(confirm('确定要通过该身份信息改动申请吗?'))location='/pass_new_authen/{{auth_user.auth_info.authen_id}}'" class="btn btn-theme">通过</a>
+                                <a href="/last_page" class="btn btn-theme">返回</a>
+                            </div>
+                            <!--                        </form>-->
+                        </form>
+
+
+                        {% if auth_user.err_msg %}
+                        <script>
+                            alert('{{ auth_user.err_msg }}');
+                        </script>
+                        {% endif %}
+                        <!--                        </form>-->
+                    </div>
+                </div>
+                <!-- col-lg-12-->
+            </div>
+        </section>
+
+    </section>
+</section>
+    <!-- js placed at the end of the document so the pages load faster -->
+    <script src="/templates/Dashio/lib/jquery/jquery.min.js"></script>
+    <script src="/templates/Dashio/lib/bootstrap/js/bootstrap.min.js"></script>
+    <script class="include" type="text/javascript" src="/templates/Dashio/lib/jquery.dcjqaccordion.2.7.js"></script>
+    <script src="/templates/Dashio/lib/jquery.scrollTo.min.js"></script>
+    <script src="/templates/Dashio/lib/jquery.nicescroll.js" type="text/javascript"></script>
+    <!--common script for all pages-->
+    <script src="/templates/Dashio/lib/common-scripts.js"></script>
+    <!--script for this page-->
+    <script src="/templates/Dashio/lib/jquery-ui-1.9.2.custom.min.js"></script>
+    <!--custom switch-->
+    <script src="/templates/Dashio/lib/bootstrap-switch.js"></script>
+    <!--custom tagsinput-->
+    <script src="/templates/Dashio/lib/jquery.tagsinput.js"></script>
+    <!--custom checkbox & radio-->
+    <script type="text/javascript" src="/templates/Dashio/lib/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
+    <script type="text/javascript" src="/templates/Dashio/lib/bootstrap-daterangepicker/date.js"></script>
+    <script type="text/javascript" src="/templates/Dashio/lib/bootstrap-daterangepicker/daterangepicker.js"></script>
+    <script type="text/javascript" src="/templates/Dashio/lib/bootstrap-inputmask/bootstrap-inputmask.min.js"></script>
+    <script src="/templates/Dashio/lib/form-component.js"></script>
+    <script src="/templates/Dashio/lib/php-mail-form/validate.js"></script>
+
+
+</body>
+
+</html>
