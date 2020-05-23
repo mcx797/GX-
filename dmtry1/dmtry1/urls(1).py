@@ -36,11 +36,9 @@ urlpatterns = [
     url(r'^check_newach_authen/', dview.check_newach_authen),
     url(r'^check_newauthen_details/(?P<id>\d+)$', dview.check_one_newach_authen),
     url(r'^delete_newauthen/(?P<id>\d+)$', dview.delete_one_newauthen),
-    url(r'^pass_one_newach_authen/(?P<id>\d+)$', dview.pass_one_newach_authen),
     # url(r'^check_sch_ach_authen/', dview.check_sch_ach_authen),
-    url(r'^check_schach_authenmouetails/(?P<id>\d+)$', dview.check_one_sch_ach_authen),
+    url(r'^check_schach_authen_details/(?P<id>\d+)$', dview.check_one_sch_ach_authen),
     url(r'^delete_schach_authen/(?P<id>\d+)$', dview.delete_one_schach_authen),
-    url(r'^pass_schach_authen/(?P<id>\d+)$', dview.pass_one_sch_ach_authen),
 
     url(r'^checkdepartment/', dview.check_department),
     url(r'^delete_one_dep/(?P<id>\d+)$', dview.delete_one_dep),
@@ -57,7 +55,6 @@ urlpatterns = [
     url(r'^delete_scholar/(?P<id>\d+)$', dview.del_scholar),
     url(r'^edit_one_scholar/(?P<id>\d+)$', dview.edit_one_scholar),
     url(r'^check_one_scholar/(?P<id>\d+)$', dview.check_one_scholar),
-
 
     url(r'^student/$', dview.student),
     url(r'^delete_student/(?P<id>\d+)$', dview.del_student),
@@ -76,16 +73,16 @@ urlpatterns = [
     url(r'^authen_user_detail/(?P<id>\d+)', dview.authen_user_detail),
     url(r'^exist_user_auth_detail/(?P<authen_id>\d+)', dview.exist_user_auth_detail),
 
+    # # 添加爬取结果
+    # url(r'^add_get_achievement/$', dview.add_get_achievement),
+    # url(r'^pass_new_achievement/(?P<id>\d+)$', dview.pass_new_achievement),
+    # url(r'^del_new_achievement/(?P<id>\d+)$', dview.del_new_achievement),
 
     # 成果学者相关
     url(r'^scholar_achiev/(?P<id>\d+)$', dview.check_scholar_achievement),
     url(r'^achiev_scholar/(?P<id>\d+)$', dview.check_achievement_scholar),
     url(r'^last_page/$', dview.to_last_page),
     url(r'^department_scholar/(?P<id>\d+)$', dview.check_department_scholar),
-
-    url(r'^department_student/(?P<id>\d+)$', dview.check_department_student),
-    url(r'^student_achiev/(?P<id>\d+)$', dview.check_student_achievement),
-    url(r'^achiev_student/(?P<id>\d+)$', dview.check_achievement_student),
 
     # 成果搜索
     url(r'^search_ach/', dview.search_ach),
@@ -108,11 +105,6 @@ urlpatterns = [
 
     url(r'^logout/', dview.logout),
 
-    # 学者成果查询
-    url(r'^checkstuachievement/', dview.check_student_ach),
-    url(r'^delete_one_stu_ach/(?P<id>\d+)$', dview.delete_one_student_ach),
-    url(r'^check_one_stu_ach/(?P<id>\d+)$', dview.check_one_student_ach),
-    
 
     #  小程序相关
     url(r'^code2key', dview.code2key),

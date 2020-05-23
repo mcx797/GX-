@@ -1942,8 +1942,9 @@ def AchievementDetail(request):
     retData['year'] = achieve.year
     retData['link_text'] = achieve.link
     retData['keyword'] = achieve.keyword
+    retData['author'] = achieve.author_name
+    '''
     sa1 = scholar_achievement_tab.objects.filter(a_id = a_id)
-    print(len(sa1))
     if len(sa1) == 1:
         s1 = scholar_tab.objects.get(scholar_id = sa1[0].scholar_id)
         retData['author'] += s1.name
@@ -1953,6 +1954,10 @@ def AchievementDetail(request):
             retData['author'] += ' '
             retData['author'] += s1.name 
     return HttpResponse(json.dumps(retData), content_type = "application/json")
+'''
+    
+
+
 
 '''
 获取学者展示界面的学院信息
@@ -2123,6 +2128,9 @@ def ScholarCerti(request):
     school = request.GET['school']
     print(school)
     authen_tab(email = mail, name = name, sno = studentNumber, department = department, identity = 1, school = school).save()
+    a1 = authen_tab.objects.filter(name = name, email = mail, department = department, identity = 1)
+    print(a1[0].authen_id)
+    user_authen_tab(authen_id = a1[0].authen_id, user_id = user_id).save()
     return HttpResponse(json.dumps(retData), content_type = 'application/json')
     
 
