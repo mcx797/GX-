@@ -90,7 +90,7 @@ class achievement_brief_tab(models.Model):
     brief = models.CharField(max_length = 100)  #简介
     number = models.IntegerField()              #表示是简介中的第几段
     next_id = models.IntegerField(default = 0)  #下一段的achbfId.
-    
+    flag = models.IntegerField(default = 0) 
     class Meta:
         # managed = False
         db_table = 'achievement_brief_tab'
@@ -270,7 +270,7 @@ class person_inform_tab(models.Model):
 '''
 class scholar_brief_intro_tab(models.Model):
     sbf_id = models.AutoField(primary_key=True)
-    user_id = models.IntegerField()
+    scholar_id = models.IntegerField(default = 0)
     brief = models.CharField(max_length = 100)
     number = models.IntegerField()              #表示是简介中的第几段,从1开始
     next_id = models.IntegerField(default = 0)   #下一段简介的sbf_id

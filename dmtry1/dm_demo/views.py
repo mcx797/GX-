@@ -1094,12 +1094,12 @@ def pass_authen(request, authen_id):  # 通过后向学者表/用户表中添加
     user = user_authen_tab.objects.get(authen_id=authen_id)
     user_info = user_tab.objects.get(user_id=user.user_id)
     if authen_info.identity == 1:  # 学者
-        scholar_info = scholar_tab.objects.create(user_id=user_info.user_id, school="default", name=user_info.user_name, email=authen_info.email, p_title="default")
+        scholar_info = scholar_tab.objects.create(user_id=user_info.user_id, school=authen_info.school, name=authen_info.name, email=authen_info.email, p_title="default",flag=1,Scholar_Number=authen_info.sno)
         user_tab.objects.filter(user_id=user_info.user_id).update(authority=1)
         scholar_department_tab.objects.create(scholar_id=scholar_info.scholar_id, d_id=authen_info.department)
         person_inform_tab.objects.create(user_id=user_info.user_id, title="学者身份认证通过", information="您提交的学者身份认证已通过")
     elif authen_info.identity == 2:  # 学生
-        student_info = student_tab.objects.create(user_id=user_info.user_id,school="default", name=user_info.user_name,email=authen_info.email)
+        student_info = student_tab.objects.create(user_id=user_info.user_id,school=authen_info.school, name=authen_info.name,email=authen_info.email,sno=authen_info.sno)
         user_tab.objects.filter(user_id=user_info.user_id).update(authority=2)
         student_department_tab.objects.create(student_id=student_info.student_id, d_id=authen_info.department)
         person_inform_tab.objects.create(user_id=user_info.user_id, title="学生身份认证通过", information="您提交的学生身份认证已通过")
@@ -1943,6 +1943,11 @@ def AchievementDetail(request):
     retData['link_text'] = achieve.link
     retData['keyword'] = achieve.keyword
     retData['author'] = achieve.author_name
+    brief = achievement_brief_tab.objects.filter(a_id = a_id).order_by('-number').reverse()
+    retData['brief'] = ''
+    for i in brief:
+        retData['brief'] += i.brief
+    
     '''
     sa1 = scholar_achievement_tab.objects.filter(a_id = a_id)
     if len(sa1) == 1:
@@ -1953,9 +1958,8 @@ def AchievementDetail(request):
             s1 = scholar_tab.objects.get(scholar_id = i.scholar_id)
             retData['author'] += ' '
             retData['author'] += s1.name 
-    return HttpResponse(json.dumps(retData), content_type = "application/json")
 '''
-    
+    return HttpResponse(json.dumps(retData), content_type = "application/json")  
 
 
 
@@ -2102,14 +2106,22 @@ def getUserInfo(request):
 def StudentCerti(request):
     retData = {}
     name = request.GET['name']
+    print(name)
     department = request.GET['department']
+    print(department)
     studentNumber = request.GET['studentNumber']
+    print(studentNumber)
     mail = request.GET['mail']
+    print(mail)
     user_id = request.GET['user_id']
+    print(user_id)
     school = request.GET['school']
+    print(school)
     authen_tab(email = mail, name = name, sno = studentNumber, department = department, identity = 2, school = school).save()
+    a1 = authen_tab.objects.filter(name = name, email = mail, department = department, identity = 2)
+    print(a1[0].authen_id)
+    user_authen_tab(authen_id = a1[0].authen_id, user_id = user_id).save()
     return HttpResponse(json.dumps(retData), content_type = 'application/json')
-
 '''
 学者认证
 '''
