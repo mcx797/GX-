@@ -29,6 +29,8 @@ import re
 import xlrd
 import os
 
+from django.contrib.auth import authenticate, login,logout
+from django.contrib.auth.hashers import make_password, check_password
 
 
 """
@@ -153,18 +155,20 @@ def homepage(request):
     ach_authen = achievement_authen_tab.objects.filter()
     ach_authen_count = achievement_authen_tab.objects.count()
     # 举报信息
-    reports = report_tab.objects.filter()
-    report_count = report_tab.objects.count()
+    reports = report_tab.objects.filter(flag=0)
+    report_count = len(reports)
     dict = {'admin_id': admin_id, 'user_counter': user_counter, 'user_sub': user_sub,
             'year': year, 'month': month, 'ach_sub': ach_sub, 'ach_all': ach_all,
             'user_authen': user_authen, 'user_authen_count': user_authen_count,
             'ach_authen': ach_authen, 'ach_authen_count': ach_authen_count,
             'reports': reports, 'report_count': report_count}
     path = []
+    request.session['path'] = ""
+    print(request.session['path'])
     return render(request, 'Dashio/index.html', {'dict': dict})
 
 
-def login(request):
+def login_dm(request):
     global admin_id
     if request.method == "GET":  # 如果提交方式为GET即显示login.html
         # request.sessions['verfiy'] = ''
@@ -172,17 +176,25 @@ def login(request):
         return render(request, "Dashio/login.html")
     else:  # 如果提交方式为POST
         id = request.POST.get('adminid')
-        pwd = request.POST.get('password')
+        pwd = request.POST.get('password') #make_password(,None,'pbkdf2_sha1'), password=pwd
+        # admin_tab.objects.create_user(id=id,password=pwd,username=id,errors=0)
         if admin_tab.objects.filter(id=id).exists():
-            if admin_tab.objects.filter(id=id)[0].password == pwd:
+            password = admin_tab.objects.get(id=id).password
+            print(password)
+            print(pwd)
+            if check_password(pwd,password):
                 admin_id = id
                 # response = HttpResponseRedirect('/server/')
                 # response.set_cookie('username', admin_id, 3600)
                 session = request.session
-                print(session['verfiy'])
                 session['verfiy'] = 'is_login'
                 session['admin_id'] = admin_id
-                print(session['verfiy'])
+                session['path'] = ""
+                user_true = authenticate(id=id,password=pwd)
+                print(user_true)
+                login(request,user_true)
+                # print(session['verfiy'])
+                # print(session['path'])
                 return redirect('/server/')
             else:
                 return render(request, 'Dashio/login.html', {'script': "alert", 'wrong': '密码错误'})
@@ -193,14 +205,50 @@ def login(request):
                 return render(request, 'Dashio/login.html', {'script': "alert", 'wrong': '该账号不存在'})
 
 
-def logout(request):
-    # request.sessions['verfiy'] = ''
-    # request.sessions.flush()
+def logout_view(request):
+    # request.session.flush()
+    logout(request)
     return redirect('/login')
 
 
+
+# def login(request):
+#     global admin_id
+#     if request.method == "GET":  # 如果提交方式为GET即显示login.html
+#         # request.sessions['verfiy'] = ''
+#         admin_id = ''
+#         return render(request, "Dashio/login.html")
+#     else:  # 如果提交方式为POST
+#         id = request.POST.get('adminid')
+#         pwd = request.POST.get('password')
+#         if admin_tab.objects.filter(id=id).exists():
+#             if admin_tab.objects.filter(id=id)[0].password == pwd:
+#                 admin_id = id
+#                 # response = HttpResponseRedirect('/server/')
+#                 # response.set_cookie('username', admin_id, 3600)
+#                 session = request.session
+#                 print(session['verfiy'])
+#                 session['verfiy'] = 'is_login'
+#                 session['admin_id'] = admin_id
+#                 print(session['verfiy'])
+#                 return redirect('/server/')
+#             else:
+#                 return render(request, 'Dashio/login.html', {'script': "alert", 'wrong': '密码错误'})
+#         else:
+#             if id == '':
+#                 return render(request, 'Dashio/login.html', {'script': "alert", 'wrong': '请填写登陆信息'})
+#             else:
+#                 return render(request, 'Dashio/login.html', {'script': "alert", 'wrong': '该账号不存在'})
+#
+#
+# def logout(request):
+#     # request.sessions['verfiy'] = ''
+#     # request.sessions.flush()
+#     return redirect('/login')
+
+
 # 新加的内容
-# 查看成果——对成果进行操作
+# 查看学者成果——对成果进行操作
 # @login_required
 def check_ach(request):
     # login_check(request)
@@ -210,51 +258,53 @@ def check_ach(request):
         all_ach = achievement_tab.objects.filter()
         dict = {'all_achievements': all_ach, 'admin_id': admin_id, 'size': size, 'search':search}
         if "img" not in request.path_info:
-            path.append(request.path_info)
-            print(request.path_info)
+            path0 = request.session['path']
+            request.session['path'] = path0 + "@" + request.path_info
+            print(request.session['path'])
         return render(request, 'Dashio/check_achiev.html', {'all_ach_dict': dict})
     else:  # 如果提交方式为POST
         all_ach = achievement_tab.objects.filter()
         return
 
 
-# 删除某项成果
+# 删除某项学者成果
 def delete_one_ach(request, id):
     achievement_tab.objects.filter(a_id=id).delete()
     # 同时删除brief
-    achbfId = achievement_tab.objects.filter(a_id=id)[0].brief
-    brief1 = achievement_brief_tab.objects.filter(achbfId=achbfId)[0]
-    brief = brief1.brief
-    while brief1.next_id != 0:
-        last_next_id = brief1.next_id
-        achievement_brief_tab.objects.filter(achbfId=brief1.achbfId).delete()
-        brief1 = achievement_brief_tab.objects.filter(achbfId=last_next_id)[0]
-    achievement_brief_tab.objects.filter(achbfId=brief1.achbfId).delete()
+    achievement_brief_tab.objects.filter(a_id=id, flag=0).delete()
     return redirect('/checkachievement')
 
 
-# 查看某项成果的详细信息
+# 查看某项学者成果的详细信息
 def check_one_ach(request, id):
     # login_check(request)
     err_msg = ''
     if request.method == "GET":
         ach_info = achievement_tab.objects.filter(a_id=id)[0]
         brief = ''
-        # 将brief组合起来
-        if ach_info.brief == 0:
+        if not achievement_brief_tab.objects.filter(a_id=id, flag=0).exists():
             brief = '暂无'
         else:
-            # 去brief表中找
-            brief1 = achievement_brief_tab.objects.filter(achbfId=ach_info.brief)[0]
-            brief = brief1.brief
-            while brief1.next_id != 0:
-                last_next_id = brief1.next_id
-                brief1 = achievement_brief_tab.objects.filter(achbfId=last_next_id)[0]
-                brief = brief + brief1.brief
+            briefs = achievement_brief_tab.objects.filter(a_id=id, flag=0).order_by('number')
+            for b in briefs:
+                brief = brief + b.brief
+        # brief = ''
+        # # 将brief组合起来
+        # if ach_info.brief == 0:
+        #     brief = '暂无'
+        # else:
+        #     # 去brief表中找
+        #     brief1 = achievement_brief_tab.objects.filter(achbfId=ach_info.brief)[0]
+        #     brief = brief1.brief
+        #     while brief1.next_id != 0:
+        #         last_next_id = brief1.next_id
+        #         brief1 = achievement_brief_tab.objects.filter(achbfId=last_next_id)[0]
+        #         brief = brief + brief1.brief
         dict = {'admin_id': admin_id, 'ach_info': ach_info, 'err_msg': err_msg, 'brief': brief}
         if "img" not in request.path_info:
-            path.append(request.path_info)
-            print(request.path_info)
+            path0 = request.session['path']
+            request.session['path'] = path0 + "@" + request.path_info
+            print(request.session['path'])
         return render(request, "Dashio/check_achiev_detail.html", {'check_ach': dict})
     else:
         return
@@ -268,8 +318,9 @@ def check_student_ach(request):
         all_ach = stuachievement_tab.objects.filter()
         dict = {'all_achievements': all_ach, 'admin_id': admin_id, 'size': size, 'search':search}
         if "img" not in request.path_info:
-            path.append(request.path_info)
-            print(request.path_info)
+            path0 = request.session['path']
+            request.session['path'] = path0 + "@" + request.path_info
+            print(request.session['path'])
         return render(request, 'Dashio/check_stu_achiev.html', {'all_ach_dict': dict})
     else:  # 如果提交方式为POST
         all_ach = achievement_tab.objects.filter()
@@ -280,14 +331,7 @@ def check_student_ach(request):
 def delete_one_student_ach(request, id):
     stuachievement_tab.objects.filter(a_id=id).delete()
     # 同时删除brief
-    achbfId = stuachievement_tab.objects.filter(a_id=id)[0].brief
-    brief1 = achievement_brief_tab.objects.filter(achbfId=achbfId)[0]
-    brief = brief1.brief
-    while brief1.next_id != 0:
-        last_next_id = brief1.next_id
-        achievement_brief_tab.objects.filter(achbfId=brief1.achbfId).delete()
-        brief1 = achievement_brief_tab.objects.filter(achbfId=last_next_id)[0]
-    achievement_brief_tab.objects.filter(achbfId=brief1.achbfId).delete()
+    achievement_brief_tab.objects.filter(a_id=id, flag=1).delete()
     return redirect('/checkstuachievement')
 
 
@@ -297,21 +341,17 @@ def check_one_student_ach(request, id):
     if request.method == "GET":
         ach_info = stuachievement_tab.objects.filter(a_id=id)[0]
         brief = ''
-        # 将brief组合起来
-        if ach_info.brief == 0:
+        if not achievement_brief_tab.objects.filter(a_id=id, flag=1).exists():
             brief = '暂无'
         else:
-            # 去brief表中找
-            brief1 = achievement_brief_tab.objects.filter(achbfId=ach_info.brief)[0]
-            brief = brief1.brief
-            while brief1.next_id != 0:
-                last_next_id = brief1.next_id
-                brief1 = achievement_brief_tab.objects.filter(achbfId=last_next_id)[0]
-                brief = brief + brief1.brief
+            briefs = achievement_brief_tab.objects.filter(a_id=id, flag=1).order_by('number')
+            for b in briefs:
+                brief = brief + b.brief
         dict = {'admin_id': admin_id, 'ach_info': ach_info, 'err_msg': err_msg, 'brief': brief}
         if "img" not in request.path_info:
-            path.append(request.path_info)
-            print(request.path_info)
+            path0 = request.session['path']
+            request.session['path'] = path0 + "@" + request.path_info
+            print(request.session['path'])
         return render(request, "Dashio/check_stu_achiev_detail.html", {'check_ach': dict})
     else:
         return
@@ -326,21 +366,17 @@ def edit_one_ach(request, id):
     if request.method == "GET":
         ach_info = achievement_tab.objects.filter(a_id=id)[0]
         brief = ''
-        # 将brief组合起来
-        if ach_info.brief == 0:
+        if not achievement_brief_tab.objects.filter(a_id=id, flag=0).exists():
             brief = '暂无'
         else:
-            # 去brief表中找
-            brief1 = achievement_brief_tab.objects.filter(achbfId=ach_info.brief)[0]
-            brief = brief1.brief
-            while brief1.next_id != 0:
-                last_next_id = brief1.next_id
-                brief1 = achievement_brief_tab.objects.filter(achbfId=last_next_id)[0]
-                brief = brief + brief1.brief
+            briefs = achievement_brief_tab.objects.filter(a_id=id, flag=0).order_by('number')
+            for b in briefs:
+                brief = brief + b.brief
         dict = {'admin_id': admin_id, 'ach_info': ach_info, 'err_msg': err_msg, 'brief': brief}
         if "img" not in request.path_info:
-            path.append(request.path_info)
-            print(request.path_info)
+            path0 = request.session['path']
+            request.session['path'] = path0 + "@" + request.path_info
+            print(request.session['path'])
         return render(request, "Dashio/edit_achievement.html", {'edit_ach': dict})
     else:  # 如果提交方式为POST
         name = request.POST.get('name')
@@ -382,29 +418,16 @@ def edit_one_ach(request, id):
                                                              kind=kind, num_view=num_view)
             ach_info = achievement_tab.objects.filter(a_id=id)[0]
             brief = ''
-            # 将brief组合起来
-            if ach_info.brief == 0:
+            if not achievement_brief_tab.objects.filter(a_id=id, flag=0).exists():
                 brief = '暂无'
             else:
-                # 去brief表中找
-                brief1 = achievement_brief_tab.objects.filter(achbfId=ach_info.brief)[0]
-                brief = brief1.brief
-                while brief1.next_id != 0:
-                    last_next_id = brief1.next_id
-                    brief1 = achievement_brief_tab.objects.filter(achbfId=last_next_id)[0]
-                    brief = brief + brief1.brief
+                briefs = achievement_brief_tab.objects.filter(a_id=id, flag=0).order_by('number')
+                for b in briefs:
+                    brief = brief + b.brief
             # 如果brief发生改变
             if brief != brief_change:
                 # 将之前brief在brief表中的信息删除
-                brief1 = achievement_brief_tab.objects.filter(achbfId=ach_info.brief)[0]
-                last_id = ach_info.brief
-                brief = brief1.brief
-                while brief1.next_id != 0:
-                    last_next_id = brief1.next_id
-                    brief1 = achievement_brief_tab.objects.filter(achbfId=last_next_id)[0]
-                    achievement_brief_tab.objects.filter(achbfId=last_id).delete()
-                    last_id = brief1.achbfId
-                achievement_brief_tab.objects.filter(achbfId=last_id).delete()
+                achievement_brief_tab.objects.filter(a_id=id, flag=0).delete()
                 # 再将brief加入brief表中
                 brief_left = brief_change
                 count = 0  # brief的数目
@@ -418,8 +441,8 @@ def edit_one_ach(request, id):
                     brief_left = brief_left[100:]
                     this_brief = achievement_brief_tab.objects.create(a_id=a_id, brief=brief_left[:100],
                                                                       number=count)
-                    if count == 1:
-                        save_brief = this_brief.achbfId
+                    # if count == 1:
+                    #     save_brief = this_brief.achbfId
                     if count > 1:
                         achievement_brief_tab.objects.filter(achbfId=last_id).update(next_id=this_brief.achbfId)
                 # 剩下的小于100字符的摘要
@@ -428,12 +451,12 @@ def edit_one_ach(request, id):
                         last_id = this_brief.achbfId
                     count = count + 1
                     this_brief = achievement_brief_tab.objects.create(a_id=a_id, brief=brief_left, number=count)
-                    if count == 1:
-                        save_brief = this_brief.achbfId
+                    # if count == 1:
+                    #     save_brief = this_brief.achbfId
                     if count > 1:
                         achievement_brief_tab.objects.filter(achbfId=last_id).update(next_id=this_brief.achbfId)
-                # 更新新成果中的brief
-                achievement_tab.objects.filter(a_id=a_id).update(brief=save_brief)
+                # # 更新新成果中的brief
+                # achievement_tab.objects.filter(a_id=a_id).update(brief=save_brief)
             err_msg = "修改成果项成功"
             ach_info = achievement_tab.objects.filter(a_id=a_id)[0]
         dict = {'admin_id': admin_id, 'ach_info': ach_info, 'err_msg': err_msg}
@@ -487,7 +510,6 @@ def add_achievement(request):
                                                         num_view=num_view, keyword=keyword)
                 brief_left = brief
                 count = 0  # brief的数目
-                save_brief = 0  # 存入成果表的brief项
                 this_brief = 0
                 last_id = 0
                 while len(brief_left) > 100:
@@ -498,8 +520,6 @@ def add_achievement(request):
                     brief_left = brief_left[100:]
                     this_brief = achievement_brief_tab.objects.create(a_id=newach.a_id, brief=brief_left[:100],
                                                                       number=count)
-                    if count == 1:
-                        save_brief = this_brief.achbfId
                     if count > 1:
                         achievement_brief_tab.objects.filter(achbfId=last_id).update(next_id=this_brief.achbfId)
                 # 剩下的小于100字符的摘要
@@ -508,12 +528,8 @@ def add_achievement(request):
                         last_id = this_brief.achbfId
                     count = count + 1
                     this_brief = achievement_brief_tab.objects.create(a_id=newach.a_id, brief=brief_left, number=count)
-                    if count == 1:
-                        save_brief = this_brief.achbfId
                     if count > 1:
                         achievement_brief_tab.objects.filter(achbfId=last_id).update(next_id=this_brief.achbfId)
-                # 更新新成果中的brief
-                achievement_tab.objects.filter(a_id=newach.a_id).update(brief=save_brief)
                 err_msg = "添加成果项成功"
             dict = {'admin_id': admin_id, 'err_msg': err_msg}
             return render(request, 'Dashio/add_achievement.html', {'add_ach': dict})
@@ -533,8 +549,9 @@ def check_newach_authen(request):
         newach_err_msg = ''
         dict = {'all_authen1': all_authen1, 'all_authen2': newauth, 'admin_id': admin_id, 'err_msg': err_msg}
         if "img" not in request.path_info:
-            path.append(request.path_info)
-            print(request.path_info)
+            path0 = request.session['path']
+            request.session['path'] = path0 + "@" + request.path_info
+            print(request.session['path'])
         return render(request, 'Dashio/check_achiev_authen.html', {'ach_authen': dict})
     else:  # 如果提交方式为POST
         all_authen = achievement_tab.objects.filter()
@@ -553,8 +570,9 @@ def check_one_newach_authen(request, id):
     if request.method == "GET":
         dict = {'admin_id': admin_id, 'auth_info': auth_info, 'scholar_name': scholar_name, 'err_msg': err_msg}
         if "img" not in request.path_info:
-            path.append(request.path_info)
-            print(request.path_info)
+            path0 = request.session['path']
+            request.session['path'] = path0 + "@" + request.path_info
+            print(request.session['path'])
         return render(request, "Dashio/check_newachiev_details.html", {'check_newauth': dict})
     else:
         # 驳回
@@ -584,7 +602,6 @@ def pass_one_newach_authen(request, id):
     # 先将brief加入brief表中
     brief_left = newach_auth.brief
     count = 0  # brief的数目
-    save_brief = 0  # 存入成果表的brief项
     this_brief = 0
     last_id = 0
     while len(brief_left) > 100:
@@ -593,9 +610,8 @@ def pass_one_newach_authen(request, id):
         count = count + 1
         brief = brief_left[:100]
         brief_left = brief_left[100:]
-        this_brief = achievement_brief_tab.objects.create(a_id=newach.a_id, brief=brief_left[:100], number=count)
-        if count == 1:
-            save_brief = this_brief.achbfId
+        this_brief = achievement_brief_tab.objects.create(a_id=newach.a_id, brief=brief_left[:100],
+                                                          number=count)
         if count > 1:
             achievement_brief_tab.objects.filter(achbfId=last_id).update(next_id=this_brief.achbfId)
     # 剩下的小于100字符的摘要
@@ -604,12 +620,8 @@ def pass_one_newach_authen(request, id):
             last_id = this_brief.achbfId
         count = count + 1
         this_brief = achievement_brief_tab.objects.create(a_id=newach.a_id, brief=brief_left, number=count)
-        if count == 1:
-            save_brief = this_brief.achbfId
         if count > 1:
             achievement_brief_tab.objects.filter(achbfId=last_id).update(next_id=this_brief.achbfId)
-    # 更新新成果中的brief
-    achievement_tab.objects.filter(a_id=newach.a_id).update(brief=save_brief)
     # 将其中all_id均存入new_relation_tab中
     all_id = newach_auth.all_id
     if len(all_id) > 0:  # 说明有关联学者
@@ -667,8 +679,9 @@ def check_one_sch_ach_authen(request, id):
                 'year': year, 'author_name': author_name, 'citation': citation, 'j_a_name':j_a_name,
                 'file':file, 'link':link, 'keyword':keyword, 'kind':kind, 'num_view': num_view, 'err_msg': err_msg}
         if "img" not in request.path_info:
-            path.append(request.path_info)
-            print(request.path_info)
+            path0 = request.session['path']
+            request.session['path'] = path0 + "@" + request.path_info
+            print(request.session['path'])
         return render(request, "Dashio/check_schach_authen_details.html", {'check_schach_auth': dict})
     else:
         # 驳回
@@ -708,8 +721,9 @@ def check_department(request):
         all_dep = department_tab.objects.filter()
         dict = {'all_departments': all_dep, 'admin_id': admin_id}
         if "img" not in request.path_info:
-            path.append(request.path_info)
-            print(request.path_info)
+            path0 = request.session['path']
+            request.session['path'] = path0 + "@" + request.path_info
+            print(request.session['path'])
         return render(request, 'Dashio/check_department.html', {'all_dep_dict': dict})
     else:  # 如果提交方式为POST
         return
@@ -718,6 +732,8 @@ def check_department(request):
 # 删除某个院系
 def delete_one_dep(request, id):
     department_tab.objects.filter(d_id=id).delete()
+    scholar_department_tab.objects.filter(d_id=id).delete()
+    student_department_tab.objects.filter(d_id=id).delete()
     return redirect('/checkdepartment')
 
 
@@ -728,8 +744,9 @@ def check_one_dep(request, id):
         dep_info = department_tab.objects.filter(d_id=id)[0]
         dict = {'admin_id': admin_id, 'dep_info': dep_info, 'err_msg': err_msg}
         if "img" not in request.path_info:
-            path.append(request.path_info)
-            print(request.path_info)
+            path0 = request.session['path']
+            request.session['path'] = path0 + "@" + request.path_info
+            print(request.session['path'])
         return render(request, "Dashio/check_dep_brief.html", {'check_dep': dict})
     else:
         return
@@ -744,7 +761,8 @@ def edit_one_dep(request, id):
         dep_info = department_tab.objects.filter(d_id=id)[0]
         dict = {'admin_id': admin_id, 'dep_info': dep_info, 'err_msg': err_msg}
         if "img" not in request.path_info:
-            path.append(request.path_info)
+            request.session['path'].append(request.path_info)
+            # path.append(request.path_info)
             print(request.path_info)
         return render(request, "Dashio/edit_department.html", {'edit_dep': dict})
     else:  # 如果提交方式为POST
@@ -810,8 +828,9 @@ def check_report(request):
         all_report = report_tab.objects.filter(flag=0)
         dict = {'all_reports': all_report, 'admin_id': admin_id}
         if "img" not in request.path_info:
-            path.append(request.path_info)
-            print(request.path_info)
+            path0 = request.session['path']
+            request.session['path'] = path0 + "@" + request.path_info
+            print(request.session['path'])
         return render(request, 'Dashio/check_report.html', {'all_rep_dict': dict})
     else:  # 如果提交方式为POST
         return
@@ -844,8 +863,9 @@ def scholar(request):
     all_scholar = scholar_tab.objects.filter()
     dict = {'admin_id': admin_id, 'all_sch': all_scholar, 'size': size, 'dep': dep, 'err_msg': err_msg}
     if "img" not in request.path_info:
-        path.append(request.path_info)
-        print(request.path_info)
+        path0 = request.session['path']
+        request.session['path'] = path0 + "@" + request.path_info
+        print(request.session['path'])
     return render(request, 'Dashio/check_scholar.html', {'all_scholar': dict})
 
 
@@ -855,8 +875,17 @@ def del_scholar(request, id):
     if id == -1:
         scholar_err_msg = '该学者信息尚未被认领，无法删除'
     else:
+        scholar_id = scholar_tab.objects.filter(user_id=id)[0].scholar_id
         scholar_tab.objects.filter(user_id=id).delete()
         user_tab.objects.filter(user_id=id).delete()
+        achievement_authen_tab.objects.filter(scholar_id=scholar_id).delete()
+        scholar_achievement_tab.objects.filter(scholar_id=scholar_id).delete()    # 这里成果是否删除？
+        scholar_change_tab.objects.filter(scholar_id=scholar_id).delete()
+        person_inform_tab.objects.filter(user_id=id).delete()
+        scholar_brief_intro_tab.objects.filter(scholar_id=scholar_id).delete()
+        scholar_department_tab.objects.filter(scholar_id=scholar_id).delete()
+        collect_scholar_tab.objects.filter(scholar_id=scholar_id).delete()
+        scholar_direction_tab.objects.filter(scholar_id=scholar_id).delete()
     return redirect('/scholar')
 
 
@@ -874,11 +903,20 @@ def check_one_scholar(request, id):
             department = department_tab.objects.filter(d_id=d_id)[0].name
         else:
             department = -1
+        # 找到所有有关brief
+        brief = ''
+        if not scholar_brief_intro_tab.objects.filter(scholar_id=id).exists():
+            brief = '暂无简介'
+        else:
+            briefs = scholar_brief_intro_tab.objects.filter(scholar_id=id).order_by('number')
+            for b in briefs:
+                brief = brief + b.brief
         sch_info = scholar_tab.objects.filter(scholar_id=id)[0]
-        dict = {'admin_id': admin_id, 'sch_info': sch_info, 'err_msg': err_msg, 'department': department}
+        dict = {'admin_id': admin_id, 'sch_info': sch_info, 'err_msg': err_msg, 'department': department, 'brief': brief}
         if "img" not in request.path_info:
-            path.append(request.path_info)
-            print(request.path_info)
+            path0 = request.session['path']
+            request.session['path'] = path0 + "@" + request.path_info
+            print(request.session['path'])
         return render(request, "Dashio/check_scholar_info.html", {'check_sch': dict})
     else:
         return
@@ -893,8 +931,9 @@ def edit_one_scholar(request, id):
         sch_info = scholar_tab.objects.filter(user_id=id)[0]
         dict = {'admin_id': admin_id, 'sch_info': sch_info, 'err_msg': err_msg}
         if "img" not in request.path_info:
-            path.append(request.path_info)
-            print(request.path_info)
+            path0 = request.session['path']
+            request.session['path'] = path0 + "@" + request.path_info
+            print(request.session['path'])
         return render(request, "Dashio/edit_scholar.html", {'edit_sch': dict})
     else:  # 如果提交方式为POST
         name = request.POST.get('name')
@@ -920,16 +959,24 @@ def student(request):
     dep = ''
     dict = {'admin_id': admin_id, 'all_student': all_student, 'size': size, 'dep': dep}
     if "img" not in request.path_info:
-        path.append(request.path_info)
-        print(request.path_info)
+        path0 = request.session['path']
+        request.session['path'] = path0 + "@" + request.path_info
+        print(request.session['path'])
     return render(request, 'Dashio/student.html', {'all_student_dict': dict})
 
 
 # 删除学生用户
 def del_student(request,id):
-    student_tab.objects.filter(user_id=id).delete()
     student_id = student_tab.objects.filter(user_id=id).student_id
-
+    student_tab.objects.filter(user_id=id).delete()
+    user_tab.objects.filter(user_id=id).delete()
+    if student_achievement_tab.objects.filter(student_id=student_id).exists():
+        for i in student_achievement_tab.objects.filter(student_id=student_id):
+            a_id = i.a_id
+            if len(student_achievement_tab.objects.filter(a_id=a_id)) == 1:
+                stuachievement_tab.objects.filter(a_id=a_id).delete()
+    student_achievement_tab.objects.filter(student_id=student_id).delete()  # 是否删学生成果？
+    student_department_tab.objects.filter(student_id=student_id).delete()
     return redirect('/student')
 
 
@@ -947,8 +994,9 @@ def check_one_student(request, id):
         stu_info = student_tab.objects.filter(user_id=id)[0]
         dict = {'admin_id': admin_id, 'stu_info': stu_info, 'err_msg': err_msg, 'department': department}
         if "img" not in request.path_info:
-            path.append(request.path_info)
-            print(request.path_info)
+            path0 = request.session['path']
+            request.session['path'] = path0 + "@" + request.path_info
+            print(request.session['path'])
         return render(request, "Dashio/check_student_info.html", {'check_student': dict})
     else:
         return
@@ -963,8 +1011,9 @@ def edit_one_student(request, id):
         stu_info = student_tab.objects.filter(user_id=id)[0]
         dict = {'admin_id': admin_id, 'stu_info': stu_info, 'err_msg': err_msg}
         if "img" not in request.path_info:
-            path.append(request.path_info)
-            print(request.path_info)
+            path0 = request.session['path']
+            request.session['path'] = path0 + "@" + request.path_info
+            print(request.session['path'])
         return render(request, "Dashio/edit_student.html", {'edit_student': dict})
     else:  # 如果提交方式为POST
         name = request.POST.get('name')
@@ -990,8 +1039,9 @@ def authen_user(request):
         new_authen.append(NewAuthen(authen))
     dict = {'admin_id': admin_id, 'all_authen': new_authen}
     if "img" not in request.path_info:
-        path.append(request.path_info)
-        print(request.path_info)
+        path0 = request.session['path']
+        request.session['path'] = path0 + "@" + request.path_info
+        print(request.session['path'])
     return render(request, 'Dashio/authen_user.html', {'all_authen_dict': dict})
 
 
@@ -1002,16 +1052,26 @@ def authen_user_detail(request,id):
     sch_info = authen_tab.objects.filter(authen_id=id)[0]
     user = user_authen_tab.objects.filter(authen_id =id)[0]
     if request.method == "GET":
-        dict = {'auth_info': sch_info, 'err_msg': err_msg}
+        if department_tab.objects.filter(d_id=sch_info.department).exists():
+            department = department_tab.objects.filter(d_id=sch_info.department)[0].name
+        else:
+            department = "暂无信息"
+        # department = department_tab.objects.filter(d_id=sch_info.department)[0].name
+        dict = {'auth_info': sch_info, 'err_msg': err_msg, 'department': department}
         if "img" not in request.path_info:
-            path.append(request.path_info)
-            print(request.path_info)
+            path0 = request.session['path']
+            request.session['path'] = path0 + "@" + request.path_info
+            print(request.session['path'])
         return render(request, "Dashio/check_authen_user_detail.html", {'auth_user': dict})
     else:  # 如果提交方式为POST
+        if department_tab.objects.filter(d_id=sch_info.department).exists():
+            department = department_tab.objects.filter(d_id=sch_info.department)[0].name
+        else:
+            department = "暂无信息"
         information = request.POST.get('reject_info')
         if len(information) > 400:
             err_msg = "反馈信息不能多于400字符"
-            dict = {'auth_info': sch_info, 'err_msg': err_msg}
+            dict = {'auth_info': sch_info, 'err_msg': err_msg, 'department': department}
             return render(request, "Dashio/check_authen_user_detail.html", {'auth_user': dict})
         t1 = sch_info.identity
         tit = ""
@@ -1020,7 +1080,7 @@ def authen_user_detail(request,id):
         elif t1 is 2:
             tit = "您申请成为：学生 的身份认证失败。"
         person_inform_tab.objects.create(user_id=user.user_id, title=tit, information=information)
-        return redirect('/del_authen/' + str(user.user_id))
+        return redirect('/del_authen/' + id)
 
 
 # 展示学者修改身份信息
@@ -1029,8 +1089,9 @@ def check_auth_exist_user(request):  #只显示flag= 0的
     all_new_authen = scholar_change_tab.objects.all()
     dict = {'admin_id': admin_id, 'all_authen': all_new_authen}
     if "img" not in request.path_info:
-        path.append(request.path_info)
-        print(request.path_info)
+        path0 = request.session['path']
+        request.session['path'] = path0 + "@" + request.path_info
+        print(request.session['path'])
     return render(request, 'Dashio/authen_exist_user.html', {'all_authen_dict': dict})
 
 
@@ -1051,8 +1112,9 @@ def exist_user_auth_detail(request,authen_id):
         err_msg = ""
         auth_user = {'auth_info':auth_info, 'err_msg': err_msg}
         if "img" not in request.path_info:
-            path.append(request.path_info)
-            print(request.path_info)
+            path0 = request.session['path']
+            request.session['path'] = path0 + "@" + request.path_info
+            print(request.session['path'])
         return render(request,'Dashio/check_exist_user_authen_detail.html',{'auth_user':auth_user})
     if request.method == "POST":
         # 驳回
@@ -1094,14 +1156,19 @@ def pass_authen(request, authen_id):  # 通过后向学者表/用户表中添加
     user = user_authen_tab.objects.get(authen_id=authen_id)
     user_info = user_tab.objects.get(user_id=user.user_id)
     if authen_info.identity == 1:  # 学者
-        scholar_info = scholar_tab.objects.create(user_id=user_info.user_id, school=authen_info.school, name=authen_info.name, email=authen_info.email, p_title="default",flag=1,Scholar_Number=authen_info.sno)
+        scholar_info = scholar_tab.objects.create(user_id=user_info.user_id, school=authen_info.school,
+                                                  name=authen_info.name, email=authen_info.email, p_title="default",
+                                                  flag=1, Scholar_Number=authen_info.sno)
         user_tab.objects.filter(user_id=user_info.user_id).update(authority=1)
-        scholar_department_tab.objects.create(scholar_id=scholar_info.scholar_id, d_id=authen_info.department)
+        if department_tab.objects.filter(d_id=authen_info.department).exists():
+            scholar_department_tab.objects.create(scholar_id=scholar_info.scholar_id, d_id=authen_info.department)
         person_inform_tab.objects.create(user_id=user_info.user_id, title="学者身份认证通过", information="您提交的学者身份认证已通过")
     elif authen_info.identity == 2:  # 学生
-        student_info = student_tab.objects.create(user_id=user_info.user_id,school=authen_info.school, name=authen_info.name,email=authen_info.email,sno=authen_info.sno)
+        student_info = student_tab.objects.create(user_id=user_info.user_id,school=authen_info.school,
+                                                  name=authen_info.name,email=authen_info.email, sno=authen_info.sno)
         user_tab.objects.filter(user_id=user_info.user_id).update(authority=2)
-        student_department_tab.objects.create(student_id=student_info.student_id, d_id=authen_info.department)
+        if department_tab.objects.filter(d_id=authen_info.department).exists():
+            student_department_tab.objects.create(student_id=student_info.student_id, d_id=authen_info.department)
         person_inform_tab.objects.create(user_id=user_info.user_id, title="学生身份认证通过", information="您提交的学生身份认证已通过")
     return redirect('/del_authen/'+authen_id)
 
@@ -1118,8 +1185,32 @@ def check_all_user(request):
 
 # 删除用户信息
 def delete_user(request, id):
+    user = user_tab.objects.filter(user_id=id)[0]
+    if user.authority == 1:
+        scholar_id = scholar_tab.objectsfilter(user_id=id)[0].scholar_id
+        scholar_tab.objectsfilter(user_id=id).delete()
+        achievement_authen_tab.objects.filter(scholar_id=scholar_id).delete()
+        scholar_achievement_tab.objects.filter(scholar_id=scholar_id).delete()  # 这里成果是否删除？
+        scholar_change_tab.objects.filter(scholar_id=scholar_id).delete()
+        person_inform_tab.objects.filter(user_id=id).delete()
+        scholar_brief_intro_tab.objects.filter(scholar_id=scholar_id).delete()
+        scholar_department_tab.objects.filter(scholar_id=scholar_id).delete()
+        collect_scholar_tab.objects.filter(scholar_id=scholar_id).delete()
+        scholar_direction_tab.objects.filter(scholar_id=scholar_id).delete()
+    elif user.authority == 2:
+        student_id = student_tab.objects.filter(user_id=id).student_id
+        student_tab.objects.filter(user_id=id).delete()
+        user_tab.objects.filter(user_id=id).delete()
+        if student_achievement_tab.objects.filter(student_id=student_id).exists():
+            for i in student_achievement_tab.objects.filter(student_id=student_id):
+                a_id = i.a_id
+                if len(student_achievement_tab.objects.filter(a_id=a_id)) == 1:
+                    stuachievement_tab.objects.filter(a_id=a_id).delete()
+        student_achievement_tab.objects.filter(student_id=student_id).delete()  # 是否删学生成果？
+        student_department_tab.objects.filter(student_id=student_id).delete()
     user_tab.objects.filter(user_id=id).delete()
     return redirect('/checkuser')
+
 
 # ++++++++++++++++++++++++++++++++++++++
 # 查看某位学者相关的成果信息
@@ -1134,8 +1225,9 @@ def check_scholar_achievement(request, id):
             all_ach.append(achievement_tab.objects.filter(a_id=i.a_id)[0])
         dict = {'all_achievements': all_ach, 'admin_id': admin_id, 'size': size, 'search': search}
         if "img" not in request.path_info:
-            path.append(request.path_info)
-            print(request.path_info)
+            path0 = request.session['path']
+            request.session['path'] = path0 + "@" + request.path_info
+            print(request.session['path'])
         return render(request, 'Dashio/check_achiev.html', {'all_ach_dict': dict})
     else:
         if scholar_department_tab.objects.filter(scholar_id=id).exists():
@@ -1161,8 +1253,9 @@ def check_student_achievement(request, id):
             all_ach.append(stuachievement_tab.objects.filter(a_id=i.a_id)[0])
         dict = {'all_achievements': all_ach, 'admin_id': admin_id, 'size': size, 'search': search}
         if "img" not in request.path_info:
-            path.append(request.path_info)
-            print(request.path_info)
+            path0 = request.session['path']
+            request.session['path'] = path0 + "@" + request.path_info
+            print(request.session['path'])
         return render(request, 'Dashio/check_stu_achiev.html', {'all_ach_dict': dict})
     else:
         if student_department_tab.objects.filter(student_id=id).exists():
@@ -1171,11 +1264,12 @@ def check_student_achievement(request, id):
         else:
             department = -1
         err_msg = "该学生暂无可查询成果"
-        stu_info = student_tab.objects.filter(user_id=id)[0]
+        stu_info = student_tab.objects.filter(student_id=id)[0]
         dict = {'admin_id': admin_id, 'stu_info': stu_info, 'err_msg': err_msg, 'department': department}
-        if "img" not in request.path_info:
-            path.append(request.path_info)
-            print(request.path_info)
+        # if "img" not in request.path_info:
+        #     path0 = request.session['path']
+        #     request.session['path'] = path0 + "@" + request.path_info
+        #     print(request.session['path'])
         return render(request, "Dashio/check_student_info.html", {'check_student': dict})
 
 
@@ -1200,8 +1294,9 @@ def check_achievement_scholar(request, id):
         #     return render(request, "Dashio/check_achiev_detail.html", {'check_ach': dict})
         dict = {'admin_id': admin_id, 'all_sch': all_scholar, 'size': size, 'dep': dep}
         if "img" not in request.path_info:
-            path.append(request.path_info)
-            print(request.path_info)
+            path0 = request.session['path']
+            request.session['path'] = path0 + "@" + request.path_info
+            print(request.session['path'])
         return render(request, 'Dashio/check_scholar.html', {'all_scholar': dict})
     else:
         err_msg = "该成果暂无可查询相关学者信息"
@@ -1222,8 +1317,9 @@ def check_achievement_student(request, id):
             all_student.append(student_tab.objects.filter(student_id=i.student_id)[0])
         dict = {'admin_id': admin_id, 'all_student': all_student, 'size': size, 'dep': dep}
         if "img" not in request.path_info:
-            path.append(request.path_info)
-            print(request.path_info)
+            path0 = request.session['path']
+            request.session['path'] = path0 + "@" + request.path_info
+            print(request.session['path'])
         return render(request, 'Dashio/student.html', {'all_student_dict': dict})
     else:
         err_msg = "该成果暂无可查询相关学生信息"
@@ -1254,8 +1350,9 @@ def check_department_scholar(request, id):
         else:
             dict = {'admin_id': admin_id, 'all_sch': all_scholar, 'size': size, 'dep': dep}
             if "img" not in request.path_info:
-                path.append(request.path_info)
-                print(request.path_info)
+                path0 = request.session['path']
+                request.session['path'] = path0 + "@" + request.path_info
+                print(request.session['path'])
             return render(request, 'Dashio/check_scholar.html', {'all_scholar': dict})
     else:
         err_msg = "该院系暂无可查询相关学者信息"
@@ -1282,8 +1379,9 @@ def check_department_student(request, id):
         # else:
         dict = {'admin_id': admin_id, 'all_student': all_student, 'size': size, 'dep': dep}
         if "img" not in request.path_info:
-            path.append(request.path_info)
-            print(request.path_info)
+            path0 = request.session['path']
+            request.session['path'] = path0 + "@" + request.path_info
+            print(request.session['path'])
         return render(request, 'Dashio/student.html', {'all_student_dict': dict})
     else:
         err_msg = "该院系暂无可查询相关学生信息"
@@ -1328,16 +1426,24 @@ def check_achauthen_scholar(request, id):
         else:
             dict = {'admin_id': admin_id, 'all_sch': all_scholar, 'size': size, 'dep': dep}
             if "img" not in request.path_info:
-                path.append(request.path_info)
-                print(request.path_info)
+                path0 = request.session['path']
+                request.session['path'] = path0 + "@" + request.path_info
+                print(request.session['path'])
             return render(request, 'Dashio/check_scholar.html', {'all_scholar': dict})
 
 
 # 返回上一页
 def to_last_page(request):
+    path0 = request.session['path']
+    path = path0.split('@')
+    print(path)
     path.pop()
     last_path = path[-1]
     path.pop()
+    path1 = ""
+    for p in path:
+        path1 = path1 + "@" + p
+    request.session['path'] = path1
     return redirect(last_path)
 
 
@@ -1417,8 +1523,9 @@ def search_ach(request):
                 'search4_text': search4_text, 'search5_text': search5_text, 'err_msg': err_msg,
                 'check_scholar': check_scholar, 'check_student': check_student}
         if "img" not in request.path_info:
-            path.append(request.path_info)
-            print(request.path_info)
+            path0 = request.session['path']
+            request.session['path'] = path0 + "@" + request.path_info
+            print(request.session['path'])
         return render(request, 'Dashio/search_ach.html', {'search_dict': dict})
     else:
         return
@@ -1471,8 +1578,9 @@ def change_search_ach(request):
                 'search4_text': search4_text, 'search5_text': search5_text, 'err_msg': err_msg,
                 'check_scholar': check_scholar, 'check_student': check_student}
         if "img" not in request.path_info:
-            path.append(request.path_info)
-            print(request.path_info)
+            path0 = request.session['path']
+            request.session['path'] = path0 + "@" + request.path_info
+            print(request.session['path'])
         return render(request, 'Dashio/search_ach.html', {'search_dict': dict})
     else:
         return
@@ -1551,6 +1659,8 @@ def check_search_ach(request):
             if check_student is None:
                 # 出错
                 search_err_msg = "需至少在学者成果和学生成果中选择一项"
+                path0 = request.session['admin_id']
+                path = path0.split('@')
                 last_path = path[-1]
                 path.pop()
                 return redirect(last_path)
@@ -1567,17 +1677,23 @@ def check_search_ach(request):
         if release_year == 'all':
             if release_year2 != 'all':
                 search_err_msg = "成果发表年份需要同时选择all"
+                path0 = request.session['admin_id']
+                path = path0.split('@')
                 last_path = path[-1]
                 path.pop()
                 return redirect(last_path)
         elif release_year2 == 'all':
             if release_year != 'all':
                 search_err_msg = "成果发表年份需要同时选择all"
+                path0 = request.session['admin_id']
+                path = path0.split('@')
                 last_path = path[-1]
                 path.pop()
                 return redirect(last_path)
         elif int(release_year2) < int(release_year):
             search_err_msg = "成果发表年份起始时间选择错误"
+            path0 = request.session['admin_id']
+            path = path0.split('@')
             last_path = path[-1]
             path.pop()
             return redirect(last_path)
@@ -1695,8 +1811,9 @@ def check_search_ach(request):
     search = "搜索结果"
     dict = {'all_achievements': all_ach, 'all_stu_ach': all_stu_ach, 'admin_id': admin_id, 'size': size, 'search': search}
     if "img" not in request.path_info:
-        path.append(request.path_info)
-        print(request.path_info)
+        path0 = request.session['path']
+        request.session['path'] = path0 + "@" + request.path_info
+        print(request.session['path'])
     return render(request, 'Dashio/check_achiev.html', {'all_ach_dict': dict})
 
 
@@ -1759,8 +1876,9 @@ def show_report_detail(request, id):
     all_re_dict = {'report_info': report_info[0], 'admin_id': admin_id}
     if request.method == "GET":
         if "img" not in request.path_info:
-            path.append(request.path_info)
-            print(request.path_info)
+            path0 = request.session['path']
+            request.session['path'] = path0 + "@" + request.path_info
+            print(request.session['path'])
         return render(request,'Dashio/report_detail.html',{'all_re_dict':all_re_dict})
     if request.method == "POST":
         information = request.POST.get('reject_info')
@@ -1817,6 +1935,8 @@ def login_check(request):
 
 
 
+
+
 '''
 为用户生成首页的学者信息, 被code2key引用
 '''
@@ -1849,6 +1969,24 @@ def getnoticeList():
 
 
 '''
+返回院系信息
+'''
+def getdepartment():
+    retData = []
+    depart = department_tab.objects.all()
+    for i in depart:
+        a = {}
+        a['name'] = i.name
+        a['d_id'] = i.d_id
+        a['number'] = i.number
+        retData.append(a)
+    return retData
+
+
+
+
+
+'''
 微信用户登录系统时提交自己的code， 管理端转化为openID并进行登录，若是初次使用
 则自动为用户注册为访客用户,同时返回首页需要的学者信息，并返回。
 '''
@@ -1867,6 +2005,7 @@ def code2key(request):
     retData['authority'] = t1.authority
     retData['scholarData'] = getIndexScholarInfo(t1.user_id)
     retData['noticeList'] = getnoticeList()
+    retData['department'] = getdepartment()
     return HttpResponse(json.dumps(retData), content_type = "application/json")
 
 
@@ -1947,18 +2086,18 @@ def AchievementDetail(request):
     retData['brief'] = ''
     for i in brief:
         retData['brief'] += i.brief
-    
-    '''
+    retData['Scholar'] = []
     sa1 = scholar_achievement_tab.objects.filter(a_id = a_id)
-    if len(sa1) == 1:
-        s1 = scholar_tab.objects.get(scholar_id = sa1[0].scholar_id)
-        retData['author'] += s1.name
-    else:
-        for i in sa1:
-            s1 = scholar_tab.objects.get(scholar_id = i.scholar_id)
-            retData['author'] += ' '
-            retData['author'] += s1.name 
-'''
+    for i in sa1:
+        scholar_id = i.scholar_id
+        scholar = scholar_tab.objects.filter(scholar_id = scholar_id)
+        a = {}
+        a['scholar_id'] = scholar[0].scholar_id
+        a['get_id'] = scholar[0].get_id
+        a['name'] = scholar[0].name
+        a['position'] = scholar[0].p_title
+        a['school'] = scholar[0].school
+        retData['Scholar'].append(a)
     return HttpResponse(json.dumps(retData), content_type = "application/json")  
 
 
@@ -1983,7 +2122,6 @@ def ScholarDepartment(request):
 
 def scholarGet(request):
     retData = []
-    num = 0
     d_id = request.GET['id']
     sdt = scholar_department_tab.objects.filter(d_id = d_id)
     for i in sdt:
@@ -1995,9 +2133,6 @@ def scholarGet(request):
         a['email'] = s1.email
         a['id'] = s1.scholar_id
         retData.append(a)
-        num += 1
-        if (num == 10):
-            break
     return HttpResponse(json.dumps(retData), content_type = "application/json")
 
 '''
@@ -2021,25 +2156,24 @@ def ScholarDetail(request):
     retData['department'] = depart.name
     retData['position'] = scholar.p_title
     retData['mail'] = scholar.email
-    return HttpResponse(json.dumps(retData), content_type = "application/json")
-
-
-
-'''
-学生认证
-'''
-def StudentCerti(request):
-    retData = {}
-    openId = request.GET['openId']
-    Name = request.GET['name']
-    department = request.GET['department']
-    studentNumber = request.GET['studentNumber']
-    mail = request.GET['mail']
-    authen_tab(email = mail, name = Name, sno = studentNumber, identity = 2).save()
-    user_tab.objects.filter(wechatid = openId).update(user_name = Name)
-    t1 = user_tab.objects.get(wechatid = openId)
-    t2 = authen_tab.objects.get(name = Name)
-    user_authen_tab(user_id = t1.user_id, authen_id = t2.authen_id).save()
+    s1 = scholar_brief_intro_tab.objects.filter(scholar_id = s_id).order_by('-number').reverse()
+    retData['brief'] = ''
+    if len(s1) == 0:
+        retData['brief'] = '暂无简介'
+    else:
+        for i in s1:
+            retData['brief'] += i.brief
+    retData['Achievement'] = []
+    sat1 = scholar_achievement_tab.objects.filter(scholar_id = s_id)
+    for i in sat1:
+        a_id = i.a_id
+        achieve = achievement_tab.objects.filter(a_id = a_id)
+        a = {}
+        a['name'] = achieve[0].name
+        a['a_id'] = a_id
+        a['year'] = achieve[0].year
+        a['num_view'] = achieve[0].num_view
+        retData['Achievement'].append(a)
     return HttpResponse(json.dumps(retData), content_type = "application/json")
 
 
@@ -2158,10 +2292,22 @@ def show_log(request):
     path = '../image/' + get_id + '.jpg'
     module_dir = os.path.dirname(__file__)
     path = os.path.join(module_dir, path)
-    print(path)
     file_one = open(path, "rb")
     return HttpResponse(file_one.read(), content_type = 'image/jpg')
 
+
+
+'''
+展示院系图片
+'''
+def show_department_image(request):
+    d_id = request.GET['d_id']
+    path = '../image-department/' + d_id + '.png'
+    module_dir = os.path.dirname(__file__)
+    path = os.path.join(module_dir, path)
+    file_one = open(path, 'rb')
+    return HttpResponse(file_one.read(), content_type = 'image/jpg')
+    
 
 
 '''
@@ -2312,14 +2458,101 @@ def getAllNotice(request):
 
 def achievePost(request):
     retData = {}
-    name = request.GET['name']
-    type1 = request.GET['type']
-    link = request.GET['link']
-    fabiao = request.GET['fabiao']
-    keyword = request.GET['keyword']
-    brief = request.GET['brief']
-    author1 = request.GET['author1']
-    author2 = request.GET['author2']
-    author3 = request.GET['author3']
-    author_o = request.GET['author_o']
-     
+    name = request.GET['name'] #成果名
+    type1 = request.GET['type'] #成果类型
+    year = request.GET['link']  #成果年份
+    fabiao = request.GET['fabiao']#成果发表
+    keyword = request.GET['keyword'] #成果关键词
+    brief = request.GET['brief'] #成果摘要
+    author1 = request.GET['author1'] #作者1
+    author2 = request.GET['author2'] #作者2
+    author3 = request.GET['author3'] #作者3
+    author_o = request.GET['author_o'] #作者其他
+    authority = request.GET['authority'] #提交者身份
+    user_id = request.GET['user_id']
+    if authority == '0':
+        return HttpResponse(json.dumps(retData), content_type = 'application/json')
+    if authority == '1':
+        scholar = scholar_tab.objects.filter(user_id = user_id)
+        scholar_id = scholar[0].scholar_id
+        author = []
+        if author1 != '':
+            author.append(author1)
+        if author2 != '':
+            author.append(author2)
+        if author3 != '':
+            author.append(author3)
+        if author_o != '':
+            author_o = author_o.split(';' or '；' or ',' or '，' or ' ')
+        for i in author_o:
+            author.append(i)
+        id_show = ''
+        author_show = ''
+        for i in author:
+            author_show += (i + ',')
+            scho1 = scholar_tab.objects.filter(name = i)
+            if len(scho1) != 0:
+                id_show += (str(scho1[0].scholar_id) + ',')
+        author_show = author_show[0: len(author_show) - 1]
+        if len(id_show) != 0:
+            id_show = id_show[0:len(id_show) - 1]
+        achievement_authen_tab(scholar_id = scholar_id,
+        all_id = id_show, a_name = name, year = year, author_name = author_show, 
+        citation = 0, j_a_name = fabiao, file = '暂无', link = '暂无', 
+        kind = type1, num_view = 0, keyword = keyword, brief = brief).save()
+        return HttpResponse(json.dumps(retData), content_type = 'application/json') 
+    
+    stu1 = student_tab.objects.filter(user_id = user_id)
+    author_name = stu1[0].name
+    student_id = stu1[0].student_id
+    stuachievement_tab(name = name, year = year, author_name = author_name, 
+     citation = 0, j_a_name = '暂无', file = '暂无', link = '暂无', 
+     kind = type1, num_view = 0, brief = 0, keyword = keyword).save()
+    achi = stuachievement_tab.objects.filter(name = name, author_name = author_name)
+    a_id = achi[0].a_id
+    student_achievement_tab(student_id = student_id, a_id = a_id).save()
+    return HttpResponse(json.dumps(retData), content_type = 'application/json') 
+
+
+def getVerify(request):
+    retData = []
+    user_id = request.GET['user_id']
+    scholar  = scholar_tab.objects.filter(user_id = user_id)
+    if len(scholar) == 0:
+        return HttpResponse(json.dumps(retData), content_type = 'application/json')
+    scholar_name = scholar[0].name
+    achieve_authen = achievement_authen_tab.objects.all()
+    for i in achieve_authen:
+        if scholar_name in i.author_name:
+            a = {}
+            a['name'] = i.a_name
+            a['author'] = i.author_name
+            a['type'] = i.kind
+            a['state'] = "审核中"
+            retData.append(a)
+    return HttpResponse(json.dumps(retData), content_type = 'application/json')
+            
+
+def myachieve(request):
+    retData = []
+    user_id = request.GET['user_id']
+    scholar = scholar_tab.objects.filter(user_id = user_id)
+    scholar_id = scholar[0].scholar_id
+    print(scholar_id)
+    achieve_tab = scholar_achievement_tab.objects.filter(scholar_id = scholar_id)
+    if len(achieve_tab) == 0:
+        return HttpResponse(json.dumps(retData), content_type = 'application/json')
+    for i in achieve_tab:
+        a_id = i.a_id
+        achievement = achievement_tab.objects.get(a_id = a_id)
+        a = {}
+        a['name'] = achievement.name
+        a['author'] = achievement.author_name
+        a['a_id'] = achievement.a_id
+        a['year'] = achievement.year
+        retData.append(a)
+    return HttpResponse(json.dumps(retData), content_type = 'application/json')
+    
+    
+def achieveClaim(request): 
+    return('ok') 

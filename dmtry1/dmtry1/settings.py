@@ -25,7 +25,7 @@ SECRET_KEY = 'ak=+bsvp@vlq2umr3*0wi(#ih)3mc9&6cy1cu@(go6s=6n5!+4'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['114.116.68.121','localhost', '0.0.0.0:8000','127.0.0.1']
+ALLOWED_HOSTS = ['kd1.tustcs.com', '114.116.68.121','localhost', '0.0.0.0:8000','127.0.0.1']
 
 
 # Application definition
@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'dm_demo',   # 新创建的
+    'djangosecure',
 ]
 
 MIDDLEWARE = [
@@ -52,6 +53,12 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'dmtry1.urls'
 
+
+MIDDLEWARE_CLASSES = [
+    'djangosecure.middleware.SecurityMiddleware',
+]
+
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -64,10 +71,14 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                "django.template.context_processors.media",
             ],
         },
     },
 ]
+
+LOGIN_URL = '/login/'
+# LOGIN_REDIRECT_URL='/server/'
 
 WSGI_APPLICATION = 'dmtry1.wsgi.application'
 
@@ -138,3 +149,26 @@ EMAIL_HOST = 'smtp.163.com'   #发送邮件的邮箱 的 SMTP服务器，这里�
 EMAIL_PORT = 465     #发件箱的SMTP服务器端口
 EMAIL_HOST_USER = 'achievement_manage@163.com'    #发送邮件的邮箱地址
 EMAIL_HOST_PASSWORD = 'AWTJMGTNWJPMJVKO'         #发送邮件的邮箱密码(这里使用的是授权码)
+
+
+PASSWORD_HASHERS = [
+    'django.contrib.auth.hashers.PBKDF2PasswordHasher',
+    # 'django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher',
+    # 'django.contrib.auth.hashers.Argon2PasswordHasher',
+    # 'django.contrib.auth.hashers.BCryptSHA256PasswordHasher',
+    # 'django.contrib.auth.hashers.BCryptPasswordHasher',
+
+]
+
+AUTH_USER_MODEL = 'dm_demo.admin_tab'
+AUTHENTICATION_BACKENDS = ['django.contrib.auth.backends.AllowAllUsersModelBackend']
+
+
+SECURE_SSL_REDIRECT = True    #将所有非SSL请求永久重定向到SSL
+SECURE_HSTS_SECONDS = 2
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True   #使用[HTTP严格传输安全]
+SECURE_FRAME_DENY = True   #避免让自己的网页的框架和保护他们免受[点击劫持]
+SECURE_CONTENT_TYPE_NOSNIFF = True   #防止浏览器猜测资产的内容类型
+SECURE_BROWSER_XSS_FILTER = True  #启用浏览器的XSS过滤保护
+SESSION_COOKIE_SECURE = True 
+SESSION_COOKIE_HTTPONLY = True #防止COOKIE窃听，使客户端到服务端总是COOKIE加密传输

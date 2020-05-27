@@ -1,0 +1,72 @@
+ <div id="sidebar" class="nav-collapse ">
+     <!-- sidebar menu start-->
+     <ul class="sidebar-menu" id="nav-accordion">
+         <!--          <p class="centered"><a href="profile.html"><img src="img/ui-sam.jpg" class="img-circle" width="80"></a></p>-->
+         <h3 class="centered">ID:</h3>
+         <h5 class="centered">{{ request.session.admin_id }}</h5>
+<li class="mt">
+                    <a href="/server">
+                        <i class="fa fa-dashboard"></i>
+                        <span>管理主页</span>
+                    </a>
+                </li>
+                <li class="sub-menu">
+                    <a href="javascript:;">
+                        <i class="fa fa-desktop"></i>
+                        <span>用户管理</span>
+                    </a>
+                    <ul class="sub">
+                        <li><a href="/checkuser">查看所有用户</a></li>
+                        <li><a href="/scholar">查看学者</a></li>
+                        <li><a href="/student">查看学生</a></li>
+                        <li><a href="/authen_user">待认证信息</a></li>
+                        <li><a href="/check_auth_exist_user">待认证学者身份修改信息</a></li>
+                    </ul>
+                </li>
+                <li class="sub-menu">
+                    <a href="javascript:;">
+                        <i class="fa fa-cogs"></i>
+                        <span>成果管理</span>
+                    </a>
+                    <ul class="sub">
+                        <li><a href="/checkachievement">查看学者成果</a></li>
+                        <li><a href="/checkstuachievement">查看学生成果</a></li>
+                        <li><a href="/search_ach">成果模糊搜索</a></li>
+                        <li><a href="/check_newach_authen">待审批成果</a></li>
+                        <li><a href="/addachievement">添加成果</a></li>
+                        <li><a href="/add_get_achievement">爬虫添加成果</a></li>
+                    </ul>
+                </li>
+                <li class="sub-menu">
+                    <a href="javascript:;">
+                        <i class="fa fa-book"></i>
+                        <span>院系机构管理</span>
+                    </a>
+                    <ul class="sub">
+                        <li><a href="/checkdepartment">查看所有院系</a></li>
+                        <li><a href="/adddepartment">添加院系信息</a></li>
+                    </ul>
+                </li>
+
+                <li class="sub-menu">
+                    <a href="javascript:;">
+                        <i class="fa fa-book"></i>
+                        <span>举报信息管理</span>
+                    </a>
+                    <ul class="sub">
+                        <li><a href="/checkreport">查看举报信息</a></li>
+                    </ul>
+                </li>
+
+         <li class="sub-menu">
+             <a href="javascript:;">
+                 <i class="fa fa-book"></i>
+                 <span>公告管理</span>
+             </a>
+             <ul class="sub">
+                 <li><a href="/check_announce">查看公告</a></li>
+             </ul>
+         </li>
+            </ul>
+            <!-- sidebar menu end-->
+ </div>

@@ -58,12 +58,12 @@
             <div class="row mt">
                 <div class="col-lg-12">
                     <div class="form-panel">
-                        <h4 class="mb"><i class="fa fa-angle-right"></i> 学者信息</h4>
+                        <h4 class="mb"><i class="fa fa-angle-right"></i> 用户信息</h4>
                         <form class="form-horizontal style-form" method="post" action="">
                             <!--                        <form class="contact-form php-mail-form" role="form">-->
                             <!--                            <form method="post" action="">-->
                             <div class="form-group">
-                                <label class="col-sm-2 col-sm-2 control-label">学者姓名</label>
+                                <label class="col-sm-2 col-sm-2 control-label">申请人姓名</label>
                                 <div class="col-sm-10">
                                     <!--                                    <input type="text" class="form-control" name="d_id" id="d_id" placeholder="院系ID(4位数字串，eg.0000)" data-rule="minlength:4" data-msg="请输入正确4位院系ID" minlength="4" required="required">-->
                                     {{auth_user.auth_info.name}}
@@ -74,6 +74,13 @@
                                 <div class="col-sm-10">
                                     <!--                                    <input type="text" class="form-control" name="d_name" id="d_name" placeholder="院系名称" data-rule="required" data-msg="请输入正确院系名称" required="required">-->
                                      {{auth_user.auth_info.school}}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 col-sm-2 control-label">所在院系</label>
+                                <div class="col-sm-10">
+                                    <!--                                    <input type="text" class="form-control" name="d_name" id="d_name" placeholder="院系名称" data-rule="required" data-msg="请输入正确院系名称" required="required">-->
+                                    {{auth_user.department}}
                                 </div>
                             </div>
                             <div class="form-group">
@@ -111,7 +118,7 @@
                             </div>
                             <div class="form-send">
                                 <button type="submit" class="btn btn-theme">驳回</button>
-                                <a href="javascript:if(confirm('确定要通过该身份信息改动申请吗?'))location='/pass_new_authen/{{auth_user.auth_info.authen_id}}'" class="btn btn-theme">通过</a>
+                                <a href="javascript:if(confirm('确定要通过该用户身份认证申请吗?'))location='/pass_authen/{{auth_user.auth_info.authen_id}}'" class="btn btn-theme">通过</a>
                                 <a href="/last_page" class="btn btn-theme">返回</a>
                             </div>
                             <!--                        </form>-->

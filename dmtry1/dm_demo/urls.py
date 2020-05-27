@@ -80,4 +80,8 @@ urlpatterns = [
     url(r'getNotice', view.getNotice),
     url(r'getAllNotice', view.getAllNotice),
     url(r'achievePost', view.achievePost),
+    url(r'getVerify', view.getVerify),
+    url(r'myachieve', view.myachieve),
+    url(r'achieveClaim', view.achieveClaim),
+    url(r'show_department_image', view.show_department_image),
 ]

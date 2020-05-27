@@ -2,20 +2,62 @@ from django.db import models
 import django.utils.timezone as timezone
 # Create your models here.
 # class alluser(models.Model):
-
+from django.contrib.auth.models import BaseUserManager, AbstractBaseUser,AbstractUser,UserManager
 
 
 '''
 管理员信息
 '''
-class admin_tab(models.Model):
-    id = models.CharField(max_length=7, primary_key=True)
-    password = models.CharField(max_length=16)
-    errors = models.IntegerField()
+# class admin_tab(models.Model):
+#     id = models.CharField(max_length=7, primary_key=True)
+#     password = models.CharField(max_length=16)
+#     errors = models.IntegerField()
+#
+#     class Meta:
+#         # managed = False
+#         db_table = 'admin_tab'
 
+class admin_tab(AbstractUser):
+    id = models.CharField(max_length=7, primary_key=True)
+    # password = models.CharField(max_length=16)
+    errors = models.IntegerField()
+    # path = models.CharField(max_length=500)
+    USERNAME_FIELD = 'id'
     class Meta:
-        # managed = False
+        # managed = FalseS
         db_table = 'admin_tab'
+
+
+class UserProfileManager(BaseUserManager):
+    def create_user(self, email, name, password=None):
+        """
+        Creates and saves a User with the given email, name and password.
+        """
+        '''email是唯一标识，没有会报错'''
+        if not email:
+            raise ValueError('Users must have an email address')
+
+        user = self.model(
+            email=self.normalize_email(email),
+            name=name,
+        )
+
+        user.set_password(password)  # 检测密码合理性
+        user.save(using=self._db)  # 保存密码
+        return user
+
+    def create_superuser(self, email, name, password):
+        """
+        Creates and saves a superuser with the given email, name and password.
+        """
+        user = self.create_user(email,
+                                password=password,
+                                name=name
+                                )
+        user.is_admin = True  # 比创建用户多的一个字段
+        user.save(using=self._db)
+        return user
+
 
 '''
 成果表,摘要和关键词放外表（一会写摘要和关键词）
