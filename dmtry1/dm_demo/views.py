@@ -48,6 +48,12 @@ from django.contrib.auth.hashers import make_password, check_password
 hello 为一个视图函数，每个视图函数必须第一个参数为request。哪怕用不到request。
 request是django.http.HttpRequest的一个实例
 """
+def page_not_found(request, exception):
+    return render(request, 'Dashio/404.html',status=404)
+
+
+def page_not_found1(request):
+    return render(request, 'Dashio/500.html',status=500)
 
 admin_id = ''
 dep_info = ''
@@ -2126,6 +2132,9 @@ def scholarGet(request):
     sdt = scholar_department_tab.objects.filter(d_id = d_id)
     for i in sdt:
         a = {}
+        a1s1 = scholar_tab.objects.filter(scholar_id = i.scholar_id)
+        if len(a1s1) == 0:
+            continue
         s1 = scholar_tab.objects.get(scholar_id = i.scholar_id)
         a['name'] = s1.name
         a['p_title'] = s1.p_title
@@ -2221,8 +2230,9 @@ def faveScholar(request):
 '''
 def getUserInfo(request):
     retData = {}
+    user_id = request.GET['user_id']
     print(request.GET['user_id'])
-    user = user_tab.objects.get(user_id = request.GET['user_id'])
+    user = user_tab.objects.get(user_id = user_id)
     print(user.user_name)
     retData['user_name'] = user.user_name
     if user.authority == 0:
@@ -2230,6 +2240,26 @@ def getUserInfo(request):
         retData['school'] = '请先进行认证'
         retData['department'] = '请先进行认证'
         retData['mail'] = '请先进行认证'
+    if user.authority == 1:
+        scholar = scholar_tab.objects.filter(user_id = user_id)
+        retData['name'] = scholar[0].name
+        retData['studentNumber'] = scholar[0].Scholar_Number
+        retData['school'] = scholar[0].school
+        retData['mail'] = scholar[0].email
+        scholar_id = scholar[0].scholar_id
+        sdt = scholar_department_tab.objects.filter(scholar_id = scholar_id)
+        d_id = sdt[0].d_id
+        retData['department'] = department_tab.objects.get(d_id = d_id).name
+    if user.authority == 2:
+        stu = student_tab.objects.filter(user_id = user_id)
+        retData['name'] = stu[0].name
+        retData['studentNumber'] = stu[0].sno
+        retData['school'] = stu[0].school
+        retData['mail'] = stu[0].email
+        student_id = stu[0].student_id
+        sdt = student_department_tab.objects.filter(student_id = student_id)
+        d_id = sdt[0].d_id
+        retData['department'] = department_tab.objects.get(d_id = d_id).name
     return HttpResponse(json.dumps(retData), content_type = 'application/json')
 
 

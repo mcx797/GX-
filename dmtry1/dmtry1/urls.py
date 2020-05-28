@@ -10,7 +10,7 @@ Class-based views
     1. Add an import:  from other_app.views import Home
     2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
 Including another URLconf
-    1. Import the include() function: from django.urls import include, path
+    1. Import the include() function: from django.urls import include, path/
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
@@ -18,6 +18,8 @@ from django.urls import path
 from django.conf.urls import url, include
 from dm_demo import views as dview
 from django.contrib.auth.decorators import login_required
+handler404=dview.page_not_found
+ndler500 = dview.page_not_found1
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -113,6 +115,8 @@ urlpatterns = [
     url(r'^check_one_stu_ach/(?P<id>\d+)$', login_required(dview.check_one_student_ach)),
     
 
+    #  404
+    
     #  小程序相关
     url(r'^code2key', dview.code2key),
     url(r'^paperyears', dview.paperyears),

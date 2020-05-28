@@ -23,7 +23,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'ak=+bsvp@vlq2umr3*0wi(#ih)3mc9&6cy1cu@(go6s=6n5!+4'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['kd1.tustcs.com', '114.116.68.121','localhost', '0.0.0.0:8000','127.0.0.1']
 
