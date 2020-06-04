@@ -84,4 +84,5 @@ urlpatterns = [
     url(r'myachieve', view.myachieve),
     url(r'achieveClaim', view.achieveClaim),
     url(r'show_department_image', view.show_department_image),
+    url(r'ShouldCerty', view.ShouldCerty),
 ]

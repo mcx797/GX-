@@ -196,6 +196,7 @@ def login_dm(request):
                 session['verfiy'] = 'is_login'
                 session['admin_id'] = admin_id
                 session['path'] = ""
+		# session['search_err_msg']= ""
                 user_true = authenticate(id=id,password=pwd)
                 print(user_true)
                 login(request,user_true)
@@ -767,9 +768,9 @@ def edit_one_dep(request, id):
         dep_info = department_tab.objects.filter(d_id=id)[0]
         dict = {'admin_id': admin_id, 'dep_info': dep_info, 'err_msg': err_msg}
         if "img" not in request.path_info:
-            request.session['path'].append(request.path_info)
-            # path.append(request.path_info)
-            print(request.path_info)
+            path0 = request.session['path']
+            request.session['path'] = path0 + "@" + request.path_info
+            print(request.session['path'])
         return render(request, "Dashio/edit_department.html", {'edit_dep': dict})
     else:  # 如果提交方式为POST
         number = request.POST.get('number')
@@ -1042,7 +1043,9 @@ def authen_user(request):
     all_authen = authen_tab.objects.all()
     new_authen = []
     for authen in all_authen:
-        new_authen.append(NewAuthen(authen))
+        if user_authen_tab.objects.filter(authen_id=authen.authen_id).exists():
+            new_authen.append(NewAuthen(authen))
+        #  new_authen.append(NewAuthen(authen))
     dict = {'admin_id': admin_id, 'all_authen': new_authen}
     if "img" not in request.path_info:
         path0 = request.session['path']
@@ -1507,6 +1510,7 @@ def search_ach(request):
         search3_text = ''
         search4_text = ''
         search5_text = ''
+	# err_msg = request.session['search_err_msg']
         err_msg = search_err_msg
         search_err_msg = ''
         check_scholar = ''
@@ -1538,6 +1542,7 @@ def search_ach(request):
 
 
 # 修改搜索规则
+'''
 def change_search_ach(request):
     global release_year
     global release_year2
@@ -1590,6 +1595,63 @@ def change_search_ach(request):
         return render(request, 'Dashio/search_ach.html', {'search_dict': dict})
     else:
         return
+'''
+def change_search_ach(request):
+    if request.method == "GET":
+        return search_ach_demo(request, 1)
+    else:
+        return
+
+
+def search_ach_demo(request, type):
+    global release_year
+    global release_year2
+    global author_name
+    global keyword
+    global ach_name
+    global release_year_type
+    global ach_keyword_type
+    global author_name_type
+    global ach_name_type
+    global type1
+    global type2
+    global type3
+    global type4
+    global type5
+    global search1_text
+    global search2_text
+    global search3_text
+    global search4_text
+    global search5_text
+    global ach_keyword_type
+    global author_name_type
+    global ach_name_type
+    global search_err_msg
+    global check_scholar
+    global check_student
+    err_msg = search_err_msg
+    search_err_msg = ''
+    year1 = achievement_tab.objects.values('year').distinct().order_by('year')
+    year2 = stuachievement_tab.objects.values('year').distinct().order_by('year')
+    year = []
+    for y in year1:
+        year.append(y)
+    for y in year2:
+        year.append(y)
+    dict = {'admin_id': admin_id, 'year': year, 'release_year': release_year, 'release_year2': release_year2,
+            'author_name': author_name, 'keyword': keyword, 'ach_name': ach_name,
+            'release_year_type': release_year_type, 'ach_keyword_type': ach_keyword_type,
+            'author_name_type': author_name_type, 'ach_name_type': ach_name_type,
+            'type1': type1, 'type2': type2, 'type3': type3, 'type4': type4, 'type5': type5,
+            'search1': search1, 'search2': search2, 'search3': search3, 'search4': search4, 'search5': search5,
+            'search1_text': search1_text, 'search2_text': search2_text, 'search3_text': search3_text,
+            'search4_text': search4_text, 'search5_text': search5_text, 'err_msg': err_msg,
+            'check_scholar': check_scholar, 'check_student': check_student}
+    if "img" not in request.path_info and type == 1:
+        path0 = request.session['path']
+        request.session['path'] = path0 + "@" + request.path_info
+        print(request.session['path'])
+    return render(request, 'Dashio/search_ach.html', {'search_dict': dict})
 
 
 def cal_search_ach(op, ach0, ach1):
@@ -1664,12 +1726,14 @@ def check_search_ach(request):
             check_scholar = "0"
             if check_student is None:
                 # 出错
+		# request.session['search_err_msg']="test err"
                 search_err_msg = "需至少在学者成果和学生成果中选择一项"
-                path0 = request.session['admin_id']
-                path = path0.split('@')
-                last_path = path[-1]
-                path.pop()
-                return redirect(last_path)
+                # path0 = request.session['path']
+                # path = path0.split('@')
+                # last_path = path[-1]
+                # path.pop()
+                # return redirect(last_path)
+                return search_ach_demo(request, 0)
             else:
                 all_ach_type = 1  # 只学生
         elif check_student is None:
@@ -1683,26 +1747,29 @@ def check_search_ach(request):
         if release_year == 'all':
             if release_year2 != 'all':
                 search_err_msg = "成果发表年份需要同时选择all"
-                path0 = request.session['admin_id']
-                path = path0.split('@')
-                last_path = path[-1]
-                path.pop()
-                return redirect(last_path)
+                # path0 = request.session['path']
+                # path = path0.split('@')
+                # last_path = path[-1]
+                # path.pop()
+                # return redirect(last_path)
+                return search_ach_demo(request, 0)
         elif release_year2 == 'all':
             if release_year != 'all':
                 search_err_msg = "成果发表年份需要同时选择all"
-                path0 = request.session['admin_id']
-                path = path0.split('@')
-                last_path = path[-1]
-                path.pop()
-                return redirect(last_path)
+                # path0 = request.session['path']
+                # path = path0.split('@')
+                # last_path = path[-1]
+                # path.pop()
+                # return redirect(last_path)
+                return search_ach_demo(request, 0)
         elif int(release_year2) < int(release_year):
             search_err_msg = "成果发表年份起始时间选择错误"
-            path0 = request.session['admin_id']
-            path = path0.split('@')
-            last_path = path[-1]
-            path.pop()
-            return redirect(last_path)
+            # path0 = request.session['path']
+            # path = path0.split('@')
+            # last_path = path[-1]
+            # path.pop()
+            # return redirect(last_path)
+            return search_ach_demo(request, 0)
         else:
             search_err_msg = ''
     if release_year == 'all':
@@ -2584,5 +2651,21 @@ def myachieve(request):
     return HttpResponse(json.dumps(retData), content_type = 'application/json')
     
     
-def achieveClaim(request): 
-    return('ok') 
+def achieveClaim(request):
+    retData = []
+    return HttpResponse(json.dumps(retData), content_type = 'application/json') 
+    
+    
+    
+def ShouldCerty(request):
+    retData = {}
+    user_id = request.GET['user_id']
+    retData['ShouldCerty'] = 0
+    user = user_tab.objects.filter(user_id = user_id)
+    if len(user) != 0:
+        authority = user[0].authority
+        if authority == 0:
+            author = user_authen_tab.objects.filter(user_id = user_id)
+            if len(author) == 0:
+                retData['ShouldCerty'] = 1
+    return HttpResponse(json.dumps(retData), content_type = 'application/json')

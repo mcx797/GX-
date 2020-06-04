@@ -19,7 +19,7 @@ from django.conf.urls import url, include
 from dm_demo import views as dview
 from django.contrib.auth.decorators import login_required
 handler404=dview.page_not_found
-ndler500 = dview.page_not_found1
+handler500 = dview.page_not_found1
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -145,4 +145,5 @@ urlpatterns = [
     url(r'myachieve', dview.myachieve),
     url(r'achieveClaim', dview.achieveClaim),
     url(r'show_department_image', dview.show_department_image),
+    url(r'ShouldCerty', dview.ShouldCerty),
 ]
